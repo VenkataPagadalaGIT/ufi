@@ -1,0 +1,71 @@
+npa,kind,state,principal_place,time_zones,predominant_time_zone,overlay_complex,parent_code
+212,geographic,NY,New York City,America/New_York,America/New_York,NYC-Manhattan,
+646,geographic,NY,New York City,America/New_York,America/New_York,NYC-Manhattan,212
+332,geographic,NY,New York City,America/New_York,America/New_York,NYC-Manhattan,212
+718,geographic,NY,New York City,America/New_York,America/New_York,NYC-Outer,212
+347,geographic,NY,New York City,America/New_York,America/New_York,NYC-Outer,718
+929,geographic,NY,New York City,America/New_York,America/New_York,NYC-Outer,718
+917,geographic,NY,New York City,America/New_York,America/New_York,NYC-Mobile,212
+404,geographic,GA,Atlanta,America/New_York,America/New_York,Atlanta,
+678,geographic,GA,Atlanta,America/New_York,America/New_York,Atlanta,404
+470,geographic,GA,Atlanta,America/New_York,America/New_York,Atlanta,404
+770,geographic,GA,Atlanta,America/New_York,America/New_York,Atlanta,404
+213,geographic,CA,Los Angeles,America/Los_Angeles,America/Los_Angeles,LosAngeles,
+323,geographic,CA,Los Angeles,America/Los_Angeles,America/Los_Angeles,LosAngeles,213
+310,geographic,CA,Los Angeles,America/Los_Angeles,America/Los_Angeles,LosAngelesWest,213
+424,geographic,CA,Los Angeles,America/Los_Angeles,America/Los_Angeles,LosAngelesWest,310
+415,geographic,CA,San Francisco,America/Los_Angeles,America/Los_Angeles,SanFrancisco,
+628,geographic,CA,San Francisco,America/Los_Angeles,America/Los_Angeles,SanFrancisco,415
+408,geographic,CA,San Jose,America/Los_Angeles,America/Los_Angeles,SanJose,
+669,geographic,CA,San Jose,America/Los_Angeles,America/Los_Angeles,SanJose,408
+619,geographic,CA,San Diego,America/Los_Angeles,America/Los_Angeles,SanDiego,
+858,geographic,CA,San Diego,America/Los_Angeles,America/Los_Angeles,SanDiego,619
+909,geographic,CA,San Bernardino,America/Los_Angeles,America/Los_Angeles,Inland,
+312,geographic,IL,Chicago,America/Chicago,America/Chicago,ChicagoCentral,
+872,geographic,IL,Chicago,America/Chicago,America/Chicago,ChicagoCentral,312
+773,geographic,IL,Chicago,America/Chicago,America/Chicago,ChicagoOuter,312
+305,geographic,FL,Miami,America/New_York,America/New_York,Miami,
+786,geographic,FL,Miami,America/New_York,America/New_York,Miami,305
+512,geographic,TX,Austin,America/Chicago,America/Chicago,Austin,
+737,geographic,TX,Austin,America/Chicago,America/Chicago,Austin,512
+214,geographic,TX,Dallas,America/Chicago,America/Chicago,Dallas,
+469,geographic,TX,Dallas,America/Chicago,America/Chicago,Dallas,214
+972,geographic,TX,Dallas,America/Chicago,America/Chicago,Dallas,214
+713,geographic,TX,Houston,America/Chicago,America/Chicago,Houston,
+281,geographic,TX,Houston,America/Chicago,America/Chicago,Houston,713
+832,geographic,TX,Houston,America/Chicago,America/Chicago,Houston,713
+817,geographic,TX,Fort Worth,America/Chicago,America/Chicago,FortWorth,
+682,geographic,TX,Fort Worth,America/Chicago,America/Chicago,FortWorth,817
+254,geographic,TX,Waco,America/Chicago,America/Chicago,,
+617,geographic,MA,Boston,America/New_York,America/New_York,Boston,
+857,geographic,MA,Boston,America/New_York,America/New_York,Boston,617
+702,geographic,NV,Las Vegas,America/Los_Angeles,America/Los_Angeles,LasVegas,
+725,geographic,NV,Las Vegas,America/Los_Angeles,America/Los_Angeles,LasVegas,702
+615,geographic,TN,Nashville,America/Chicago,America/Chicago,Nashville,
+629,geographic,TN,Nashville,America/Chicago,America/Chicago,Nashville,615
+206,geographic,WA,Seattle,America/Los_Angeles,America/Los_Angeles,,
+303,geographic,CO,Denver,America/Denver,America/Denver,Denver,
+720,geographic,CO,Denver,America/Denver,America/Denver,Denver,303
+215,geographic,PA,Philadelphia,America/New_York,America/New_York,Philadelphia,
+267,geographic,PA,Philadelphia,America/New_York,America/New_York,Philadelphia,215
+570,geographic,PA,Scranton,America/New_York,America/New_York,Scranton,
+272,geographic,PA,Scranton,America/New_York,America/New_York,Scranton,570
+317,geographic,IN,Indianapolis,America/New_York,America/New_York,Indianapolis,
+502,geographic,KY,Louisville,America/New_York,America/New_York,,
+518,geographic,NY,Albany,America/New_York,America/New_York,Albany,
+603,geographic,NH,Manchester,America/New_York,America/New_York,,
+302,geographic,DE,Wilmington,America/New_York,America/New_York,,
+203,geographic,CT,New Haven,America/New_York,America/New_York,Connecticut,
+475,geographic,CT,New Haven,America/New_York,America/New_York,Connecticut,203
+201,geographic,NJ,Jersey City,America/New_York,America/New_York,NorthJersey,
+551,geographic,NJ,Jersey City,America/New_York,America/New_York,NorthJersey,201
+205,geographic,AL,Birmingham,America/Chicago,America/Chicago,Birmingham,
+515,geographic,IA,Des Moines,America/Chicago,America/Chicago,,
+208,geographic,ID,Boise,America/Denver;America/Los_Angeles,America/Denver,Idaho,
+605,geographic,SD,Sioux Falls,America/Chicago;America/Denver,America/Chicago,,
+850,geographic,FL,Tallahassee,America/New_York;America/Chicago,America/Chicago,,
+620,geographic,KS,Dodge City,America/Chicago;America/Denver,America/Chicago,,
+800,non_geographic,,,,,,
+833,non_geographic,,,,,,
+888,non_geographic,,,,,,
+900,non_geographic,,,,,,

@@ -1,0 +1,187 @@
+# A numbering-resource ontology for the North American Numbering Plan.
+#
+# This is the corrected model. Earlier drafts of this ontology contained five
+# defects that a reasoner or a careful reader would reject, and each is noted
+# at the point where it was fixed, because the corrections are the instructive
+# part:
+#
+#  1. locatedIn was declared owl:equivalentProperty wdt:P131 while its domain
+#     was GeographicAreaCode. Loading Wikidata would then entail that every
+#     subject of P131 (every administrative place) is an area code. It is now
+#     rdfs:subPropertyOf.
+#  2. AreaCode was split into two disjoint subclasses with no covering axiom,
+#     so the split was not a partition and no reasoner could classify anything
+#     from it. covered_by supplies the axiom.
+#  3. overlays was declared symmetric and used both for the registry's
+#     directional parent-code relation and for membership of an overlay
+#     complex. Those are now separate: parentCode (directional, functional)
+#     and OverlayComplex with memberOf.
+#  4. Carrier was rdfs:subClassOf schema:Organization and annotated "a role,
+#     not a type", which is the pattern OntoClean exists to flag. Carrier is
+#     now a role class related to an organization by isRoleOf.
+#  5. CentralOfficeCode had no identity criterion and a functional assignedTo.
+#     An NXX is unique only within an NPA, and thousands-block pooling assigns
+#     one NPA-NXX to several carriers, so assignedTo is non-functional and the
+#     identity criterion is the NPA-NXX pair.
+
+name: nanp
+version: "0.2.0"
+
+core_classes: [GeographicAreaCode]
+
+classes:
+  NumberingResource:
+    note: Anything the numbering plan administrator assigns.
+  AreaCode:
+    parent: NumberingResource
+    covered_by: [GeographicAreaCode, NonGeographicAreaCode]   # fix 2
+    align:
+      skos:closeMatch: http://www.wikidata.org/entity/Q1029545
+    note: >
+      A three-digit NPA. Alignment is closeMatch at class level; instance-level
+      alignment is closeMatch rather than exactMatch wherever a single Wikidata
+      article covers several codes, which is true of 76 combined overlay
+      articles covering 162 codes. exactMatch there would make the codes
+      identical to one another by transitivity.
+  GeographicAreaCode:
+    parent: AreaCode
+    disjoint_with: [NonGeographicAreaCode]
+    defined_by:
+      and: [AreaCode]
+      some: {locatedIn: Place}
+    note: >
+      A defined class, so a reasoner can classify. Without an equivalence a
+      class states only necessary conditions and nothing is inferable from it,
+      which makes a reasoner run green and empty. With it, an area code
+      asserted to be located somewhere is inferred geographic, and a code typed
+      non-geographic with a location is an inconsistency rather than a silent
+      contradiction.
+  NonGeographicAreaCode:
+    parent: AreaCode
+    disjoint_with: [GeographicAreaCode]
+    note: Toll-free, premium-rate and personal-communication codes have no place.
+  OverlayComplex:                                              # fix 3
+    note: >
+      A set of area codes serving the same geographic area. A grouping class
+      rather than a symmetric property, because overlay membership is
+      transitive in effect and a property declared symmetric but not transitive
+      does not entail the cross-links it is meant to generate.
+  CentralOfficeCode:
+    parent: NumberingResource
+    note: >
+      An NPA-NXX block. Identity criterion is the pair, not the NXX: 404-555
+      and 212-555 are different resources.
+  CarrierRole:                                                 # fix 4
+    note: >
+      The role an organization plays when it holds numbering resources, kept
+      separate from the organization itself so that OntoClean's anti-rigidity
+      holds: an organization can stop being a carrier without ceasing to exist.
+  TimeZone: {}
+  Place:
+    align:
+      skos:closeMatch: http://www.wikidata.org/entity/Q2221906
+
+properties:
+  locatedIn:                                                   # fix 1
+    domain: GeographicAreaCode
+    range: Place
+    min_cardinality: 1
+    align:
+      rdfs:subPropertyOf: http://www.wikidata.org/prop/direct/P131
+    note: >
+      subPropertyOf, not equivalentProperty. Equivalence plus this domain would
+      entail that every place with a P131 statement is an area code.
+  hasTimeZone:
+    domain: GeographicAreaCode
+    range: TimeZone
+    min_cardinality: 1
+    align:
+      rdfs:subPropertyOf: http://www.wikidata.org/prop/direct/P421
+    note: Non-functional; 22 US geographic codes span two zones.
+  predominantTimeZone:
+    domain: GeographicAreaCode
+    range: TimeZone
+    functional: true
+    sub_property_of: hasTimeZone
+    note: >
+      Functional sub-property for page templates that need one value. The
+      predominance rule must be stated wherever it is used: here, the zone of
+      the places in the code holding the larger share of population at the last
+      census. Without a stated rule a template asserts a fact no source holds.
+  memberOf:                                                    # fix 3
+    domain: AreaCode
+    range: OverlayComplex
+  parentCode:                                                  # fix 3
+    domain: AreaCode
+    range: AreaCode
+    functional: true
+    note: >
+      Directional: the code this one was split or overlaid from. The registry
+      records a parent, which a symmetric property cannot express.
+  withinAreaCode:
+    domain: CentralOfficeCode
+    range: AreaCode
+    functional: true
+    min_cardinality: 1
+  assignedTo:                                                  # fix 5
+    domain: CentralOfficeCode
+    range: CarrierRole
+    functional: false
+    note: Thousands-block pooling assigns one NPA-NXX to several carriers.
+  isRoleOf:                                                    # fix 4
+    domain: CarrierRole
+    range: ext:Organization
+    functional: true
+  servesPlace:
+    domain: AreaCode
+    range: Place
+    derived: true
+    note: Derived from locatedIn and the places of its central-office codes.
+
+# Every question below carries source: keyword_export. That is the truth about
+# where these phrasings came from, and it is a weakness rather than a detail:
+# a competency question elicited from a keyword tool models what a tool already
+# measures, not what a user asked. The method calls for forum, Q&A, video,
+# social and review surfaces, and none of them had been collected when these
+# were written. See demand.FIRST_PARTY_VOICE and DemandIndex.first_party_share.
+competency_questions:
+  - id: CQ1
+    template: "what time zone is area code {e}"
+    relation: hasTimeZone
+    pattern: lookup
+    source: keyword_export
+    verbalizations:
+      - "area code {e} time zone"
+      - "what time zone is {e}"
+      - "is {e} eastern time"
+      - "what time is it in area code {e}"
+  - id: CQ2
+    template: "where is area code {e}"
+    relation: locatedIn
+    pattern: lookup
+    source: keyword_export
+    verbalizations:
+      - "area code {e} location"
+      - "where is area code {e}"
+      - "what city is area code {e}"
+      - "{e} area code what state"
+  - id: CQ3
+    template: "which area codes overlay {e}"
+    relation: memberOf
+    pattern: inverse
+    asks_about: AreaCode
+    source: keyword_export
+    verbalizations:
+      - "area codes that overlay {e}"
+      - "{e} overlay area code"
+      - "what area code covers the same area as {e}"
+  - id: CQ4
+    template: "which carriers operate in area code {e}"
+    relation: withinAreaCode
+    pattern: inverse
+    asks_about: AreaCode
+    source: keyword_export
+    verbalizations:
+      - "who called me from {e}"
+      - "what carrier is area code {e}"
+      - "is {e} a scam number"

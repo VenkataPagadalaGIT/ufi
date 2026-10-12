@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: "ufi: a reference implementation of the Content Gap Score"
+repository-code: "https://github.com/VenkataPagadalaGIT/ufi"
+url: "https://github.com/VenkataPagadalaGIT/ufi"
+message: "If you use this software, please cite it."
+type: software
+authors:
+  - family-names: Pagadala
+    given-names: Venkata
+version: 0.1.0
+license: Apache-2.0
+date-released: 2026-10-12
+keywords:
+  - content gap
+  - information retrieval
+  - knowledge graph
+  - reproducibility
+abstract: >
+  Content gap scoring from industry structure and user questions. Implements
+  the Content Gap Score at entity, relation and class level, the practitioner
+  baselines it is compared against, and the reproducibility artifacts a study
+  of it must publish: a frozen query set, a parameter lock, an auditable
+  judgment cache and a run manifest. The score is a specification; no published
+  study has yet tested whether it predicts anything.

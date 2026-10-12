@@ -1,0 +1,1418 @@
+[
+ {
+  "text": "where is area code 347",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "got a call from 850 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 19.0
+ },
+ {
+  "text": "is area code 512 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 3.0
+ },
+ {
+  "text": "is 208 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 22.0
+ },
+ {
+  "text": "is 310 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 31.0
+ },
+ {
+  "text": "who called me from 303",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 7.0
+ },
+ {
+  "text": "what city is area code 317",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 21.0
+ },
+ {
+  "text": "what area code is 512",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "area code 682 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 3274.0
+ },
+ {
+  "text": "got a call from 720 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 33.0
+ },
+ {
+  "text": "area code 470 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 4.0
+ },
+ {
+  "text": "got a call from 682 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 6.0
+ },
+ {
+  "text": "what city is area code 682",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "where is area code 303",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 5.0
+ },
+ {
+  "text": "what area code is 415",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is area code 267 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 9.0
+ },
+ {
+  "text": "got a call from 770 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 38.0
+ },
+ {
+  "text": "what city is area code 208",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2.0
+ },
+ {
+  "text": "470 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2065.0
+ },
+ {
+  "text": "who called me from 678",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "got a call from 773 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 39.0
+ },
+ {
+  "text": "got a call from 272 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 27.0
+ },
+ {
+  "text": "area code 470 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 32411.0
+ },
+ {
+  "text": "where is area code 302",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 27.0
+ },
+ {
+  "text": "is 603 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is 669 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 20.0
+ },
+ {
+  "text": "what time zone is area code 669",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 18.0
+ },
+ {
+  "text": "is area code 203 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 8.0
+ },
+ {
+  "text": "what time zone is area code 254",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 24.0
+ },
+ {
+  "text": "where is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 34.0
+ },
+ {
+  "text": "303 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 34467.0
+ },
+ {
+  "text": "is 303 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "who called me from 475",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 40.0
+ },
+ {
+  "text": "who called me from 208",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 18.0
+ },
+ {
+  "text": "got a call from 718 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 40.0
+ },
+ {
+  "text": "what city is area code 858",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 15.0
+ },
+ {
+  "text": "is area code 972 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "where is area code 512",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 17.0
+ },
+ {
+  "text": "what city is area code 312",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 21.0
+ },
+ {
+  "text": "713 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 42173.0
+ },
+ {
+  "text": "what time zone is area code 408",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 17.0
+ },
+ {
+  "text": "what time zone is area code 415",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "got a call from 917 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "who called me from 629",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 5.0
+ },
+ {
+  "text": "area code 615 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37.0
+ },
+ {
+  "text": "what time zone is area code 281",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 21.0
+ },
+ {
+  "text": "what time zone is area code 603",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 40.0
+ },
+ {
+  "text": "is area code 725 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 24.0
+ },
+ {
+  "text": "is 518 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 24.0
+ },
+ {
+  "text": "213 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 36673.0
+ },
+ {
+  "text": "where is area code 619",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 22.0
+ },
+ {
+  "text": "what area code is 669",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is 605 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 30.0
+ },
+ {
+  "text": "what city is area code 201",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 38.0
+ },
+ {
+  "text": "what time zone is area code 205",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "where is area code 470",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 20.0
+ },
+ {
+  "text": "where is area code 682",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 4.0
+ },
+ {
+  "text": "called from 470 about my service",
+  "surface": "review_gmb",
+  "source_id": "demo-gmb",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is 570 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "area code 857 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 9.0
+ },
+ {
+  "text": "208 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2731.0
+ },
+ {
+  "text": "is area code 424 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 24.0
+ },
+ {
+  "text": "is 470 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "who called me from 858",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 19.0
+ },
+ {
+  "text": "what city is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 34.0
+ },
+ {
+  "text": "is area code 305 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "got a call from 551 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "is 208 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "who called me from 713",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 28.0
+ },
+ {
+  "text": "got a call from 909 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "what time zone is area code 415",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 6.0
+ },
+ {
+  "text": "what area code is 213",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is 502 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 8.0
+ },
+ {
+  "text": "area code 786 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 28.0
+ },
+ {
+  "text": "what time zone is area code 213",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 38.0
+ },
+ {
+  "text": "is 208 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "got a call from 213 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 10.0
+ },
+ {
+  "text": "got a call from 917 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 10.0
+ },
+ {
+  "text": "area code 208 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37641.0
+ },
+ {
+  "text": "who called me from 770",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 36.0
+ },
+ {
+  "text": "got a call from 470 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 14.0
+ },
+ {
+  "text": "603 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 17559.0
+ },
+ {
+  "text": "who called me from 470",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 30.0
+ },
+ {
+  "text": "551 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 14215.0
+ },
+ {
+  "text": "where is area code 713",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2.0
+ },
+ {
+  "text": "area code 617 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 33.0
+ },
+ {
+  "text": "570 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 21775.0
+ },
+ {
+  "text": "is 551 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "what time zone is area code 212",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 39.0
+ },
+ {
+  "text": "is 570 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 23.0
+ },
+ {
+  "text": "is area code 213 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 40.0
+ },
+ {
+  "text": "what city is area code 515",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2.0
+ },
+ {
+  "text": "what time zone is area code 206",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 20.0
+ },
+ {
+  "text": "what time zone is area code 605",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 14.0
+ },
+ {
+  "text": "is 682 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "what city is area code 620",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is 551 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "what city is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 39.0
+ },
+ {
+  "text": "what city is area code 725",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 3.0
+ },
+ {
+  "text": "603 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 44327.0
+ },
+ {
+  "text": "what city is area code 929",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 8.0
+ },
+ {
+  "text": "called from 208 about my service",
+  "surface": "review_gmb",
+  "source_id": "demo-gmb",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "512 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 25949.0
+ },
+ {
+  "text": "is 470 eastern time",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "where is area code 303",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "is 470 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 34.0
+ },
+ {
+  "text": "what time zone is area code 628",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 6.0
+ },
+ {
+  "text": "what time zone is area code 669",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37.0
+ },
+ {
+  "text": "is area code 872 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 6.0
+ },
+ {
+  "text": "404 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 49305.0
+ },
+ {
+  "text": "what city is area code 713",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 38.0
+ },
+ {
+  "text": "where is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 5.0
+ },
+ {
+  "text": "area code 415 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 49040.0
+ },
+ {
+  "text": "is area code 629 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 6.0
+ },
+ {
+  "text": "is area code 254 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 4.0
+ },
+ {
+  "text": "who called me from 832",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 12.0
+ },
+ {
+  "text": "called from 415 about my service",
+  "surface": "review_gmb",
+  "source_id": "demo-gmb",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "what time zone is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 26.0
+ },
+ {
+  "text": "who called me from 570",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 6.0
+ },
+ {
+  "text": "area code 208 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 23.0
+ },
+ {
+  "text": "area code 629 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 20944.0
+ },
+ {
+  "text": "area code 619 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 14.0
+ },
+ {
+  "text": "area code 254 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 25083.0
+ },
+ {
+  "text": "got a call from 512 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 30.0
+ },
+ {
+  "text": "what city is area code 470",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "is 669 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37.0
+ },
+ {
+  "text": "what area code is 629",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "area code 551 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 5932.0
+ },
+ {
+  "text": "is area code 603 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2.0
+ },
+ {
+  "text": "area code 469 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 19.0
+ },
+ {
+  "text": "where is area code 305",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 27.0
+ },
+ {
+  "text": "what city is area code 470",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 33.0
+ },
+ {
+  "text": "got a call from 629 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "area code 323 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "who called me from 669",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 33.0
+ },
+ {
+  "text": "what time zone is area code 303",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 34.0
+ },
+ {
+  "text": "called from 669 about my service",
+  "surface": "review_gmb",
+  "source_id": "demo-gmb",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "who called me from 929",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 25.0
+ },
+ {
+  "text": "what city is area code 415",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 30.0
+ },
+ {
+  "text": "what city is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 17.0
+ },
+ {
+  "text": "where is area code 682",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 30.0
+ },
+ {
+  "text": "what time zone is area code 603",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 14.0
+ },
+ {
+  "text": "where is area code 603",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 7.0
+ },
+ {
+  "text": "what city is area code 404",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 20.0
+ },
+ {
+  "text": "called from 603 about my service",
+  "surface": "review_gmb",
+  "source_id": "demo-gmb",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "area code 470 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 17.0
+ },
+ {
+  "text": "got a call from 404 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "what time zone is area code 215",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 26.0
+ },
+ {
+  "text": "area code 214 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 28.0
+ },
+ {
+  "text": "what city is area code 646",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 7.0
+ },
+ {
+  "text": "what time zone is area code 737",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 39.0
+ },
+ {
+  "text": "is 205 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 25.0
+ },
+ {
+  "text": "area code 203 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 33.0
+ },
+ {
+  "text": "is 850 a scam number",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 35.0
+ },
+ {
+  "text": "called from 551 about my service",
+  "surface": "review_gmb",
+  "source_id": "demo-gmb",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "what city is area code 415",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 27.0
+ },
+ {
+  "text": "area code 603 location",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 19.0
+ },
+ {
+  "text": "got a call from 629 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37.0
+ },
+ {
+  "text": "is area code 404 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 13.0
+ },
+ {
+  "text": "got a call from 713 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 39.0
+ },
+ {
+  "text": "what city is area code 208",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 18.0
+ },
+ {
+  "text": "where is area code 551",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 16.0
+ },
+ {
+  "text": "what city is area code 470",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 21.0
+ },
+ {
+  "text": "what city is area code 702",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37.0
+ },
+ {
+  "text": "got a call from 208 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 12.0
+ },
+ {
+  "text": "area code 470 explained",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 13580.0
+ },
+ {
+  "text": "what city is area code 213",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 27.0
+ },
+ {
+  "text": "who called me from 254",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 10.0
+ },
+ {
+  "text": "who called me from 214",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 20.0
+ },
+ {
+  "text": "is area code 332 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 40.0
+ },
+ {
+  "text": "what city is area code 817",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 2.0
+ },
+ {
+  "text": "where is area code 603",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 29.0
+ },
+ {
+  "text": "where is area code 512",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 37.0
+ },
+ {
+  "text": "is area code 469 toll free",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 40.0
+ },
+ {
+  "text": "669 area code scam calls",
+  "surface": "video_short",
+  "source_id": "demo-video",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 14235.0
+ },
+ {
+  "text": "what area code is 713",
+  "surface": "people_also_ask",
+  "source_id": "demo-paa",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 1.0
+ },
+ {
+  "text": "got a call from 415 should I answer",
+  "surface": "forum",
+  "source_id": "demo-forum",
+  "retrieved": "2026-10-11",
+  "synthetic": true,
+  "weight": 21.0
+ }
+]

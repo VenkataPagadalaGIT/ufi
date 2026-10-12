@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ufi"
+version = "0.1.0"
+description = "Content gap scoring from industry structure and user questions: a reference implementation of the Content Gap Score"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Venkata Pagadala" }]
+keywords = ["content gap", "information retrieval", "search demand",
+            "knowledge graph", "ontology", "competency questions",
+            "generative engine optimization", "reproducibility"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = ["networkx>=3.0", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+rdf = ["rdflib>=7.0", "pyshacl>=0.25", "owlready2>=0.46"]
+dev = ["pytest>=7", "pandas>=2.0", "rdflib>=7.0", "pyshacl>=0.25",
+       "owlready2>=0.46"]
+
+[project.scripts]
+ufi = "ufi.cli:main"
+
+[project.urls]
+Source = "https://github.com/VenkataPagadalaGIT/ufi"
+Issues = "https://github.com/VenkataPagadalaGIT/ufi/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
