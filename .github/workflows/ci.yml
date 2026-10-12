@@ -27,7 +27,8 @@ jobs:
           python build_example.py | tee run1.txt
           python build_example.py | tee run2.txt
           grep "manifest digest" run1.txt
-          diff <(grep "manifest digest" run1.txt) <(grep "manifest digest" run2.txt)
+          diff <(grep -o "manifest digest [0-9a-f]*" run1.txt) <(grep -o "manifest digest [0-9a-f]*" run2.txt)
+          grep -q "manifest digest cb1646c63d8a3301" run2.txt
       - name: released digests still verify
         run: |
           ufi verify examples/nanp/out/frozen_queries.json

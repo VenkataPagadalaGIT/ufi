@@ -59,7 +59,7 @@ SHACL: 70 focus nodes, 0 violations, vacuous=False
 schema pass rate:   4/5 (80%) of declared questions the ontology can express
 instance coverage:  70.4% mean over supported questions; 2/4 answered for every subject
 demand: 177 records, 177 links, first-party share 0.00, synthetic share 1.00
-manifest digest 4a7596a507cbd5f8  judgments 1386 (calls 0, cache hits 1188)
+manifest digest cb1646c63d8a3301  judgments 1188 (calls 0, cache hits 1188)
 ```
 
 > **What is real and what is not.** The ontology and the area-code facts are real. The demand records, reported volumes and retrieved-result evidence are **synthetic**, generated with a fixed seed. Every synthetic record is flagged, the flag propagates, and the run reports a first-party demand share of 0.00 so that nothing computed from it can be mistaken for an observation about users. That is the example working correctly.
