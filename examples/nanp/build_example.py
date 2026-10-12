@@ -126,6 +126,15 @@ def main() -> int:
         v = validate(onto, g)
         print(f"SHACL: {v['focus_nodes']} focus nodes, {v['violations']} "
               f"violations, vacuous={v['vacuous']}")
+        # Competency questions, executed. The schema rate says what the model
+        # can express; the coverage rate says what this graph actually answers.
+        # They are printed together because a resource reporting only the first
+        # is reporting that it compiled.
+        from ufi import cq as _cq
+        from ufi.rdf import to_rdf
+        print()
+        print(_cq.report(_cq.run(onto, graph=to_rdf(onto, g))))
+        print()
     except ImportError as exc:
         print(f"RDF extras not installed ({exc}); skipping reasoning and SHACL. "
               'Install with: pip install "ufi[rdf]"')

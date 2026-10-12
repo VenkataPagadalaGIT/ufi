@@ -127,12 +127,15 @@ class Ontology:
             questions.append(CompetencyQuestion(
                 id=q["id"],
                 template=q["template"],
-                relation=q["relation"],
+                relation=q.get("relation") or "",
                 pattern=q.get("pattern", "lookup"),
                 verbalizations=tuple(q.get("verbalizations") or ()),
                 sparql=q.get("sparql", ""),
                 source=q.get("source", ""),
                 asks_about=q.get("asks_about", ""),
+                chain=tuple(q.get("chain") or ()),
+                unsupported=q.get("unsupported", ""),
+                answer_class=q.get("answer_class", ""),
             ))
         return cls(
             name=raw.get("name", "unnamed"),
@@ -227,7 +230,13 @@ class Ontology:
                     "transitivity or an explicit grouping class.")
 
         for q in self.questions:
-            if q.relation not in self.properties:
+            if q.unsupported:
+                pass            # a declared gap, checked below, not a defect
+            elif q.chain:
+                from .cq import validate_chain
+                for prob in validate_chain(q, self):
+                    fatal.append(prob)
+            elif q.relation not in self.properties:
                 fatal.append(f"competency question {q.id}: relation {q.relation!r} undefined")
             if not q.verbalizations:
                 problems.append(f"competency question {q.id}: no verbalizations, so "
@@ -240,6 +249,15 @@ class Ontology:
             if target and target not in self.classes and not target.startswith("ext:"):
                 fatal.append(f"competency question {q.id}: asks about {target!r}, "
                              "which is not a class")
+            if q.unsupported and q.relation:
+                problems.append(f"competency question {q.id}: marked unsupported "
+                                f"but still names relation {q.relation!r}; an "
+                                "unsupported question should name no relation, so "
+                                "that a reader cannot mistake it for answerable")
+            if not q.unsupported and not q.relation and not q.chain and not q.sparql:
+                fatal.append(f"competency question {q.id}: no relation, chain or "
+                             "sparql, and not marked unsupported, so nothing can "
+                             "execute it and no pass rate can include it")
             if q.pattern == "inverse" and not q.asks_about:
                 problems.append(
                     f"competency question {q.id}: inverse pattern with no "

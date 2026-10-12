@@ -2,6 +2,7 @@
 
     ufi validate ontology.yaml              check the model before scoring
     ufi owl ontology.yaml -o nanp.owl       export OWL 2 and SHACL
+    ufi cq ontology.yaml --graph kg.nt      run competency questions, print rates
     ufi freeze queries.txt -o frozen.json   hash the query set before launch
     ufi lock -o params.lock.json            pin alpha, beta, damping
     ufi verify frozen.json                  confirm a frozen set is intact
@@ -58,6 +59,34 @@ def _owl(a) -> int:
     else:
         print(owl)
     return 0
+
+
+def _cq(a) -> int:
+    """Run the competency questions and print both rates.
+
+    Needs a graph. Without one there is no coverage to report, and printing a
+    schema pass rate alone would invite the reading that the questions were
+    executed. The graph should be the materialized one: see cq.run.
+    """
+    onto = Ontology.from_yaml(a.ontology)
+    try:
+        from . import cq as _cq_mod
+        from rdflib import Graph
+    except ImportError as exc:
+        print(f'needs the rdf extras ({exc}); pip install "ufi[rdf]"',
+              file=sys.stderr)
+        return 2
+    base = a.base or f"http://w3id.org/ufi/{onto.name}"
+    g = Graph()
+    g.parse(a.graph, format=a.format)
+    results = _cq_mod.run(onto, graph=g, base=base)
+    print(_cq_mod.report(results))
+    if a.show_sparql:
+        print()
+        for r in results:
+            print(f"--- {r.id}: {r.template}")
+            print(r.sparql if r.supported else f"    unsupported: {r.reason}")
+    return 0 if all(r.supported for r in results) else 1
 
 
 def _freeze(a) -> int:
@@ -128,6 +157,15 @@ def main(argv: list[str] | None = None) -> int:
     o.add_argument("ontology")
     o.add_argument("-o", "--output")
     o.set_defaults(fn=_owl)
+
+    c = sub.add_parser("cq", help="run competency questions against a graph")
+    c.add_argument("ontology")
+    c.add_argument("--graph", required=True, help="RDF file holding the ABox")
+    c.add_argument("--format", default="nt", help="rdflib parse format")
+    c.add_argument("--base", help="base IRI the graph was written with")
+    c.add_argument("--show-sparql", action="store_true",
+                   help="print the generated query for every question")
+    c.set_defaults(fn=_cq)
 
     f = sub.add_parser("freeze", help="hash an evaluation query set")
     f.add_argument("queries", help="one query per line")

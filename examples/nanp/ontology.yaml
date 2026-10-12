@@ -145,10 +145,47 @@ properties:
 # social and review surfaces, and none of them had been collected when these
 # were written. See demand.FIRST_PARTY_VOICE and DemandIndex.first_party_share.
 competency_questions:
+# Provenance. Every question below carries source: keyword_export. That is the
+# truth about where these phrasings came from, and it is a weakness rather than
+# a detail: a competency question elicited from a keyword tool models what a
+# tool already measures, not what a user asked. The method calls for forum, Q&A,
+# video, social and review surfaces, and none of them had been collected when
+# these were written. See demand.FIRST_PARTY_VOICE and
+# DemandIndex.first_party_share.
+#
+# Execution. No question carries a hand-written `sparql`. The query is generated
+# from the declared path by cq.sparql_for(), so the query and the relation it
+# claims to test cannot drift apart, which is the failure mode a hand-written
+# query invites. `ufi cq --show-sparql` prints the generated query for every
+# question, and cq.run() reports it alongside the result, so the queries remain
+# inspectable and quotable without being separately maintained.
+#
+# Two defects were found here by cq.validate_chain() and are left documented
+# rather than quietly corrected, because the checks that caught them are the
+# reusable part:
+#
+#  6. CQ3 declared `relation: memberOf, pattern: inverse`. Traversing memberOf
+#     backwards enters at OverlayComplex, but the question is asked of an
+#     AreaCode, so the step did not compose. Overlay siblings are reached by
+#     going up to the complex and back down: memberOf / ^memberOf.
+#  7. CQ4 asked "which carriers operate in area code {e}" against
+#     `withinAreaCode`, a property from CentralOfficeCode to AreaCode that says
+#     nothing about carriers. The path composed and answered the wrong question,
+#     which is why `answer_class` is declared and checked against the path's
+#     terminus. The carrier question needs a three-step chain. Its reputation
+#     verbalizations were a separate information need with no relation in this
+#     ontology at all, and are now CQ5, declared unsupported rather than scored.
+#
+# CQ5 matters for the pass rate. ans(q,e) = max_p g(p) takes the best of a
+# question's phrasings, so mixing "is 404 a scam number" into a carrier question
+# lets a page that names no carrier score the carrier question as answered.
+# Splitting the need out is what makes the rate mean anything.
+
   - id: CQ1
     template: "what time zone is area code {e}"
     relation: hasTimeZone
     pattern: lookup
+    answer_class: TimeZone
     source: keyword_export
     verbalizations:
       - "area code {e} time zone"
@@ -159,6 +196,7 @@ competency_questions:
     template: "where is area code {e}"
     relation: locatedIn
     pattern: lookup
+    answer_class: Place
     source: keyword_export
     verbalizations:
       - "area code {e} location"
@@ -167,21 +205,53 @@ competency_questions:
       - "{e} area code what state"
   - id: CQ3
     template: "which area codes overlay {e}"
-    relation: memberOf
+    chain: [memberOf, "^memberOf"]                               # fix 6
     pattern: inverse
     asks_about: AreaCode
+    answer_class: AreaCode
     source: keyword_export
+    note: >
+      The path returns the subject code as well as its siblings, because a code
+      is a member of its own complex. cq.run() reports coverage over subjects,
+      not answer counts, so the reflexive binding does not inflate the rate; a
+      page template consuming this must filter the subject out.
     verbalizations:
       - "area codes that overlay {e}"
       - "{e} overlay area code"
       - "what area code covers the same area as {e}"
   - id: CQ4
     template: "which carriers operate in area code {e}"
-    relation: withinAreaCode
+    chain: ["^withinAreaCode", assignedTo, isRoleOf]             # fix 7
     pattern: inverse
     asks_about: AreaCode
+    answer_class: "ext:Organization"
     source: keyword_export
+    note: >
+      Three steps: back from the area code to the central office codes within
+      it, to the carrier roles those blocks are assigned to, to the
+      organizations holding those roles. The chain is the reason CarrierRole
+      exists as a class: without the role, the question would have to run from
+      a block straight to an organization and the anti-rigidity defect of
+      fix 4 would return.
     verbalizations:
-      - "who called me from {e}"
       - "what carrier is area code {e}"
+      - "which phone companies use area code {e}"
+      - "who owns area code {e} numbers"
+  - id: CQ5
+    template: "is a call from area code {e} a scam"
+    pattern: lookup
+    asks_about: AreaCode
+    source: keyword_export
+    unsupported: >
+      Reputation has no relation in this ontology. Nothing in the numbering
+      plan registry records whether calls from a code are fraudulent, and the
+      registry is this ontology's only source, so the question cannot be
+      answered from it at any coverage. It is listed because the keyword export
+      shows the demand plainly and an ontology that silently omits a question
+      its own domain attracts is less useful than one that names the gap. A page
+      answering it would need a complaint or reputation source this model does
+      not have, and the schema pass rate counts it as a miss.
+    verbalizations:
       - "is {e} a scam number"
+      - "who called me from {e}"
+      - "{e} spam calls"

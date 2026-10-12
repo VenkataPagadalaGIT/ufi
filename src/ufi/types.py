@@ -95,12 +95,15 @@ class CompetencyQuestion:
 
     id: str
     template: str                 # "what time zone is area code {e}"
-    relation: str
-    pattern: str
+    relation: str = ""            # empty when the question uses `chain`
+    pattern: str = "lookup"
     verbalizations: tuple[str, ...] = ()
     sparql: str = ""
     source: str = ""              # which demand source the phrasing came from
     asks_about: str = ""          # the class the question is asked OF
+    chain: tuple[str, ...] = ()   # property path; "^p" traverses p backwards
+    unsupported: str = ""         # why the ontology cannot express this at all
+    answer_class: str = ""        # the class of thing the question asks FOR
 
     def subject_class(self, properties: dict) -> str:
         """Which class this question is asked about.

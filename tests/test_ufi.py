@@ -441,3 +441,149 @@ def test_reasoner_derives_the_class_rather_than_reading_it(tmp_path):
     assert out["consistent"] and out["reclassified"] == 1
     assert kg.entities["npa:404"].cls == "GeographicAreaCode"
     assert kg.entities["npa:800"].cls == "AreaCode"
+
+
+# ---------------------------------------------------------------------------
+# Competency-question execution and pass rates.
+#
+# These guard the two defects the chain validator found in the NANP ontology,
+# because a validator that cannot fail is not a check. Both are expressed as
+# the broken form, so a regression reintroducing either one fails here.
+# ---------------------------------------------------------------------------
+
+def _example_graph():
+    """The worked example's own graph, materialized.
+
+    Built through the example's loader rather than a hand-made fixture, so a
+    coverage number here is the number the published example reports.
+    """
+    import importlib.util
+    root = Path(__file__).resolve().parent.parent / "examples" / "nanp"
+    spec = importlib.util.spec_from_file_location(
+        "_build_example", root / "build_example.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    onto, _ = _nanp()
+    kg = mod.build_graph(root / "data" / "area_codes.csv")
+    rdf.materialize(onto, kg)
+    return rdf.to_rdf(onto, kg)
+
+
+def test_inverse_step_that_does_not_compose_is_caught():
+    """CQ3's original form: ^memberOf asked of an AreaCode.
+
+    Traversing memberOf backwards enters at OverlayComplex. The question is
+    asked of an AreaCode. Nothing connects the two, and the old model shipped
+    this as a valid inverse question.
+    """
+    from ufi.cq import validate_chain
+    from ufi.types import CompetencyQuestion
+    onto, _ = _nanp()
+    broken = CompetencyQuestion(
+        id="CQ3-old", template="which area codes overlay {e}",
+        chain=("^memberOf",), asks_about="AreaCode")
+    problems = validate_chain(broken, onto)
+    assert problems, "a non-composing inverse step must be reported"
+    assert "does not compose" in problems[0]
+    assert "OverlayComplex" in problems[0]
+
+
+def test_path_that_composes_but_answers_the_wrong_question_is_caught():
+    """CQ4's original form: withinAreaCode asked for carriers.
+
+    The step composes, so composition alone passes it. It ends at a central
+    office code while the question asks for an organization, which is why the
+    answer type is declared and checked.
+    """
+    from ufi.cq import validate_chain
+    from ufi.types import CompetencyQuestion
+    onto, _ = _nanp()
+    broken = CompetencyQuestion(
+        id="CQ4-old", template="which carriers operate in area code {e}",
+        chain=("^withinAreaCode",), asks_about="AreaCode",
+        answer_class="ext:Organization")
+    problems = validate_chain(broken, onto)
+    assert problems, "a path ending at the wrong class must be reported"
+    assert "CentralOfficeCode" in problems[0]
+    assert "ext:Organization" in problems[0]
+
+
+def test_corrected_questions_all_compose():
+    onto, _ = _nanp()
+    from ufi.cq import validate_chain
+    for q in onto.questions:
+        assert not validate_chain(q, onto), f"{q.id} should compose"
+
+
+def test_generated_sparql_renders_a_property_path():
+    from ufi.cq import sparql_for
+    onto, _ = _nanp()
+    cq4 = next(q for q in onto.questions if q.id == "CQ4")
+    q = sparql_for(cq4, onto, "http://example.org/nanp")
+    b = "http://example.org/nanp"
+    expected = (f"^<{b}#withinAreaCode>/<{b}#assignedTo>/<{b}#isRoleOf>")
+    assert expected in q, "the three steps must render as one property path"
+    assert q.count("?s a <") == 1, "exactly one subject-class binding"
+
+
+def test_unsupported_question_is_reported_not_scored():
+    """A question the ontology cannot express is a named gap.
+
+    It must not be silently dropped (which would inflate the rate) and must not
+    be counted as a coverage failure of extraction (which would misattribute
+    the cause).
+    """
+    from ufi.cq import run, report
+    onto, _ = _nanp()
+    results = run(onto, graph=_example_graph())
+    cq5 = next(r for r in results if r.id == "CQ5")
+    assert cq5.supported is False
+    assert "no relation in this ontology" in cq5.reason
+    sup = [r for r in results if r.supported]
+    assert len(sup) == 4 and len(results) == 5
+    assert "4/5" in report(results)
+
+
+def test_registry_backed_questions_answer_for_every_code():
+    from ufi.cq import run
+    onto, _ = _nanp()
+    results = {r.id: r for r in run(onto, graph=_example_graph())}
+    for cid in ("CQ1", "CQ2"):
+        r = results[cid]
+        assert r.n_subjects > 0
+        assert r.coverage == 1.0, f"{cid} should answer for every subject"
+
+
+def test_empty_population_is_zero_coverage_not_full():
+    """The vacuous-pass trap, in the coverage statistic this time."""
+    from ufi.cq import CQResult
+    assert CQResult("X", "t", True, "", 0, 0, 0).coverage == 0.0
+
+
+def test_unsupported_question_may_not_also_name_a_relation():
+    from ufi.ontology import Ontology
+    spec = {
+        "name": "t", "version": "1",
+        "classes": {"A": {}, "B": {}},
+        "properties": {"p": {"domain": "A", "range": "B"}},
+        "competency_questions": [{
+            "id": "Q1", "template": "q", "relation": "p", "asks_about": "A",
+            "unsupported": "claims to be unanswerable",
+            "verbalizations": ["a", "b", "c"]}],
+    }
+    problems = Ontology.from_dict(spec).validate(strict=False)
+    assert any("still names relation" in p for p in problems)
+
+
+def test_question_with_nothing_to_execute_is_fatal():
+    from ufi.ontology import Ontology, OntologyError
+    spec = {
+        "name": "t", "version": "1",
+        "classes": {"A": {}},
+        "properties": {},
+        "competency_questions": [{
+            "id": "Q1", "template": "q", "asks_about": "A",
+            "verbalizations": ["a", "b", "c"]}],
+    }
+    with pytest.raises(OntologyError):
+        Ontology.from_dict(spec).validate(strict=True)
