@@ -13,6 +13,7 @@ Adapters here are deliberately thin: each one normalizes its platform's export
 into `DemandRecord`. Collection itself (API keys, rate limits, robots.txt) is
 out of scope for this package and belongs to the deployment.
 """
+
 from __future__ import annotations
 
 import csv
@@ -20,10 +21,10 @@ import json
 import re
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Iterable, Sequence
 
 from .types import Provenance, SourceClass
 
@@ -33,18 +34,23 @@ class DemandRecord:
     """One observed user question or topic signal."""
 
     text: str
-    surface: str                  # forum, video_short, social_group, review_gmb, ...
+    surface: str  # forum, video_short, social_group, review_gmb, ...
     source_id: str
     retrieved: date
-    weight: float = 1.0           # upvotes, view count, review count, frequency
+    weight: float = 1.0  # upvotes, view count, review count, frequency
     locator: str = ""
     language: str = "en"
-    synthetic: bool = False       # generated for demonstration, not observed
+    synthetic: bool = False  # generated for demonstration, not observed
 
     def provenance(self, licence: str = "") -> Provenance:
-        return Provenance(self.source_id, SourceClass.DEMAND, self.retrieved,
-                          self.locator or f"{self.source_id}#record", licence,
-                          synthetic=self.synthetic)
+        return Provenance(
+            self.source_id,
+            SourceClass.DEMAND,
+            self.retrieved,
+            self.locator or f"{self.source_id}#record",
+            licence,
+            synthetic=self.synthetic,
+        )
 
 
 class DemandAdapter(ABC):
@@ -64,22 +70,35 @@ class DemandAdapter(ABC):
         self.licence = licence
 
     @abstractmethod
-    def read(self, path: str | Path) -> Iterable[DemandRecord]:
-        ...
+    def read(self, path: str | Path) -> Iterable[DemandRecord]: ...
 
-    def _rec(self, text: str, weight: float = 1.0, locator: str = "",
-             language: str = "en") -> DemandRecord:
-        return DemandRecord(text=text.strip(), surface=self.surface,
-                            source_id=self.source_id, retrieved=self.retrieved,
-                            weight=weight, locator=locator, language=language)
+    def _rec(
+        self, text: str, weight: float = 1.0, locator: str = "", language: str = "en"
+    ) -> DemandRecord:
+        return DemandRecord(
+            text=text.strip(),
+            surface=self.surface,
+            source_id=self.source_id,
+            retrieved=self.retrieved,
+            weight=weight,
+            locator=locator,
+            language=language,
+        )
 
 
 class JsonLinesAdapter(DemandAdapter):
     """Generic adapter for a JSONL export with configurable field names."""
 
-    def __init__(self, source_id: str, retrieved: date, surface: str,
-                 text_field: str = "text", weight_field: str | None = None,
-                 locator_field: str | None = None, licence: str = ""):
+    def __init__(
+        self,
+        source_id: str,
+        retrieved: date,
+        surface: str,
+        text_field: str = "text",
+        weight_field: str | None = None,
+        locator_field: str | None = None,
+        licence: str = "",
+    ):
         super().__init__(source_id, retrieved, licence)
         self.surface = surface
         self.text_field = text_field
@@ -98,15 +117,22 @@ class JsonLinesAdapter(DemandAdapter):
             yield self._rec(
                 text,
                 weight=float(row.get(self.weight_field, 1.0)) if self.weight_field else 1.0,
-                locator=str(row.get(self.locator_field, "")) if self.locator_field else "")
+                locator=str(row.get(self.locator_field, "")) if self.locator_field else "",
+            )
 
 
 class CsvAdapter(DemandAdapter):
     """Generic adapter for a CSV export, e.g. a keyword or query export."""
 
-    def __init__(self, source_id: str, retrieved: date, surface: str,
-                 text_field: str = "keyword", weight_field: str | None = None,
-                 licence: str = ""):
+    def __init__(
+        self,
+        source_id: str,
+        retrieved: date,
+        surface: str,
+        text_field: str = "keyword",
+        weight_field: str | None = None,
+        licence: str = "",
+    ):
         super().__init__(source_id, retrieved, licence)
         self.surface = surface
         self.text_field = text_field
@@ -147,19 +173,39 @@ KEYWORD_EXPORT = "keyword_export"
 #: deployment usually adds them. Used by `DemandIndex.coverage_report` to list
 #: the ones that produced nothing, which is the honest as-built statement.
 DESIGNED_SURFACES: tuple[str, ...] = (
-    FORUM, QA_SITE, SOCIAL_GROUP, SOCIAL_POST, VIDEO_SHORT, VIDEO_LONG,
-    REVIEW_GMB, REVIEW_PLATFORM, REVIEW_APP_STORE, PAA, AUTOCOMPLETE,
-    SUPPORT_TICKET, KEYWORD_EXPORT,
+    FORUM,
+    QA_SITE,
+    SOCIAL_GROUP,
+    SOCIAL_POST,
+    VIDEO_SHORT,
+    VIDEO_LONG,
+    REVIEW_GMB,
+    REVIEW_PLATFORM,
+    REVIEW_APP_STORE,
+    PAA,
+    AUTOCOMPLETE,
+    SUPPORT_TICKET,
+    KEYWORD_EXPORT,
 )
 
 #: Which surfaces carry a user's own words rather than a tool's reconstruction.
 #: A deployment whose demand evidence is entirely in the second group has a
 #: demand term derived from what is already ranked, which is the thing the
 #: method claims not to depend on.
-FIRST_PARTY_VOICE: frozenset[str] = frozenset({
-    FORUM, QA_SITE, SOCIAL_GROUP, SOCIAL_POST, VIDEO_SHORT, VIDEO_LONG,
-    REVIEW_GMB, REVIEW_PLATFORM, REVIEW_APP_STORE, SUPPORT_TICKET,
-})
+FIRST_PARTY_VOICE: frozenset[str] = frozenset(
+    {
+        FORUM,
+        QA_SITE,
+        SOCIAL_GROUP,
+        SOCIAL_POST,
+        VIDEO_SHORT,
+        VIDEO_LONG,
+        REVIEW_GMB,
+        REVIEW_PLATFORM,
+        REVIEW_APP_STORE,
+        SUPPORT_TICKET,
+    }
+)
 TOOL_DERIVED: frozenset[str] = frozenset({PAA, AUTOCOMPLETE, KEYWORD_EXPORT})
 
 
@@ -167,8 +213,7 @@ class EntityLinker(ABC):
     """Links a demand record's text to zero or more entity ids."""
 
     @abstractmethod
-    def link(self, text: str) -> list[str]:
-        ...
+    def link(self, text: str) -> list[str]: ...
 
 
 class AliasLinker(EntityLinker):
@@ -224,8 +269,9 @@ class DemandIndex:
         return n
 
     # -------------------------------------------------------------- counting
-    def count(self, entity_id: str, surfaces: Iterable[str] | None = None,
-              weighted: bool = False) -> float:
+    def count(
+        self, entity_id: str, surfaces: Iterable[str] | None = None, weighted: bool = False
+    ) -> float:
         idxs = self.links.get(entity_id, [])
         if surfaces is not None:
             allowed = set(surfaces)
@@ -234,8 +280,12 @@ class DemandIndex:
             return float(len(idxs))
         return float(sum(self.records[i].weight for i in idxs))
 
-    def counts(self, entity_ids: Iterable[str], surfaces: Iterable[str] | None = None,
-               weighted: bool = False) -> dict[str, float]:
+    def counts(
+        self,
+        entity_ids: Iterable[str],
+        surfaces: Iterable[str] | None = None,
+        weighted: bool = False,
+    ) -> dict[str, float]:
         return {e: self.count(e, surfaces, weighted) for e in entity_ids}
 
     def questions_for(self, entity_id: str, limit: int = 20) -> list[DemandRecord]:
@@ -255,22 +305,26 @@ class DemandIndex:
             for i in idxs:
                 linked_by_surface[self.records[i].surface] += 1
                 ents_by_surface[self.records[i].surface].add(eid)
-        rows = []
+        rows: list[dict] = []
         for s in list(designed) + sorted(self._declared - set(designed)):
             if any(r["surface"] == s for r in rows):
                 continue
-            rows.append({
-                "surface": s,
-                "voice": "first-party" if s in FIRST_PARTY_VOICE else "tool-derived",
-                "in_scope": s in self._declared,
-                "records": by_surface.get(s, 0),
-                "linked_records": linked_by_surface.get(s, 0),
-                "entities_reached": len(ents_by_surface.get(s, ())),
-                "synthetic_records": sum(
-                    1 for r in self.records if r.surface == s and r.synthetic),
-                "status": "read" if by_surface.get(s, 0) else
-                          ("declared, no rows" if s in self._declared else "not collected"),
-            })
+            rows.append(
+                {
+                    "surface": s,
+                    "voice": "first-party" if s in FIRST_PARTY_VOICE else "tool-derived",
+                    "in_scope": s in self._declared,
+                    "records": by_surface.get(s, 0),
+                    "linked_records": linked_by_surface.get(s, 0),
+                    "entities_reached": len(ents_by_surface.get(s, ())),
+                    "synthetic_records": sum(
+                        1 for r in self.records if r.surface == s and r.synthetic
+                    ),
+                    "status": "read"
+                    if by_surface.get(s, 0)
+                    else ("declared, no rows" if s in self._declared else "not collected"),
+                }
+            )
         return rows
 
     def first_party_share(self) -> float:
@@ -287,9 +341,12 @@ class DemandIndex:
         total = sum(len(v) for v in self.links.values())
         if not total:
             return 0.0
-        fp = sum(1 for idxs in self.links.values() for i in idxs
-                 if self.records[i].surface in FIRST_PARTY_VOICE
-                 and not self.records[i].synthetic)
+        fp = sum(
+            1
+            for idxs in self.links.values()
+            for i in idxs
+            if self.records[i].surface in FIRST_PARTY_VOICE and not self.records[i].synthetic
+        )
         return fp / total
 
     def synthetic_share(self) -> float:
@@ -297,5 +354,7 @@ class DemandIndex:
         total = sum(len(v) for v in self.links.values())
         if not total:
             return 0.0
-        return sum(1 for idxs in self.links.values() for i in idxs
-                   if self.records[i].synthetic) / total
+        return (
+            sum(1 for idxs in self.links.values() for i in idxs if self.records[i].synthetic)
+            / total
+        )

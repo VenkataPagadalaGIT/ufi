@@ -16,24 +16,116 @@ Quick start:
 
 See `examples/nanp` for a complete run on public data.
 """
+
 __version__ = "0.2.0"
 
-from .types import (CompetencyQuestion, Entity, Grade, Judgment, Provenance,
-                    SourceClass, Triple)
-from .ontology import ClassSpec, Ontology, OntologyError, PropertySpec
+from .baselines import (
+    b1_volume,
+    b2_competitor_gap,
+    b3_question_mining,
+    b4_latent_internal,
+    compare_rankings,
+)
+from .demand import (
+    DESIGNED_SURFACES,
+    FIRST_PARTY_VOICE,
+    TOOL_DERIVED,
+    AliasLinker,
+    CsvAdapter,
+    DemandAdapter,
+    DemandIndex,
+    DemandRecord,
+    JsonLinesAdapter,
+)
 from .graph import KnowledgeGraph, ProvenanceError
-from .demand import (AliasLinker, CsvAdapter, DemandAdapter, DemandIndex,
-                     DemandRecord, JsonLinesAdapter, DESIGNED_SURFACES,
-                     FIRST_PARTY_VOICE, TOOL_DERIVED)
-from .judge import (CachedJudge, Judge, JudgmentCache, CallableJudge, RuleJudge,
-                    agreement, bootstrap_ci, weighted_kappa)
-from .score import (EntityScore, Parameters, aggregate_to_class, demand,
-                    kendall_tau, kendall_tau_scores, prior, rank_normalize,
-                    relatedness, schema_gap_by_relation, score_entities,
-                    top_k_overlap)
-from .baselines import (b1_volume, b2_competitor_gap, b3_question_mining,
-                        b4_latent_internal, compare_rankings)
-from .provenance import RunManifest, freeze_queries, lock_parameters, verify_frozen
+from .judge import (
+    CachedJudge,
+    CallableJudge,
+    Judge,
+    JudgmentCache,
+    RuleJudge,
+    agreement,
+    bootstrap_ci,
+    weighted_kappa,
+)
+from .ontology import ClassSpec, Ontology, OntologyError, PropertySpec
 from .pipeline import GapRun
+from .provenance import RunManifest, freeze_queries, lock_parameters, verify_frozen
+from .score import (
+    EntityScore,
+    Parameters,
+    aggregate_to_class,
+    demand,
+    kendall_tau,
+    kendall_tau_scores,
+    prior,
+    rank_normalize,
+    relatedness,
+    schema_gap_by_relation,
+    score_entities,
+    top_k_overlap,
+)
+from .types import (
+    CompetencyQuestion,
+    Entity,
+    Grade,
+    Judgment,
+    Provenance,
+    SourceClass,
+    Triple,
+)
 
-__all__ = [n for n in dir() if not n.startswith("_")]
+__all__ = [
+    "DESIGNED_SURFACES",
+    "FIRST_PARTY_VOICE",
+    "TOOL_DERIVED",
+    "AliasLinker",
+    "CachedJudge",
+    "CallableJudge",
+    "ClassSpec",
+    "CompetencyQuestion",
+    "CsvAdapter",
+    "DemandAdapter",
+    "DemandIndex",
+    "DemandRecord",
+    "Entity",
+    "EntityScore",
+    "GapRun",
+    "Grade",
+    "JsonLinesAdapter",
+    "Judge",
+    "Judgment",
+    "JudgmentCache",
+    "KnowledgeGraph",
+    "Ontology",
+    "OntologyError",
+    "Parameters",
+    "PropertySpec",
+    "Provenance",
+    "ProvenanceError",
+    "RuleJudge",
+    "RunManifest",
+    "SourceClass",
+    "Triple",
+    "aggregate_to_class",
+    "agreement",
+    "b1_volume",
+    "b2_competitor_gap",
+    "b3_question_mining",
+    "b4_latent_internal",
+    "bootstrap_ci",
+    "compare_rankings",
+    "demand",
+    "freeze_queries",
+    "kendall_tau",
+    "kendall_tau_scores",
+    "lock_parameters",
+    "prior",
+    "rank_normalize",
+    "relatedness",
+    "schema_gap_by_relation",
+    "score_entities",
+    "top_k_overlap",
+    "verify_frozen",
+    "weighted_kappa",
+]

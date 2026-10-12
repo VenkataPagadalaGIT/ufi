@@ -12,6 +12,7 @@ two surfaces return nothing at all. That last part matters, because a demand
 layer with silent empty surfaces is the failure mode the coverage report exists
 to expose.
 """
+
 from __future__ import annotations
 
 import csv
@@ -23,10 +24,14 @@ HERE = Path(__file__).resolve().parent
 SEED = 20261011
 
 FORUM_FORMS = [
-    "who called me from {npa}", "is {npa} a scam number",
-    "what time zone is area code {npa}", "where is area code {npa}",
-    "area code {npa} location", "got a call from {npa} should I answer",
-    "is area code {npa} toll free", "what city is area code {npa}",
+    "who called me from {npa}",
+    "is {npa} a scam number",
+    "what time zone is area code {npa}",
+    "where is area code {npa}",
+    "area code {npa} location",
+    "got a call from {npa} should I answer",
+    "is area code {npa} toll free",
+    "what city is area code {npa}",
 ]
 VIDEO_FORMS = ["area code {npa} explained", "{npa} area code scam calls"]
 REVIEW_FORMS = ["called from {npa} about my service"]
@@ -47,40 +52,64 @@ def main() -> int:
         npa = r["npa"]
         n_forum = min(14, int(pop[npa]))
         for _ in range(n_forum):
-            demand.append({"text": rng.choice(FORUM_FORMS).format(npa=npa),
-                           "surface": "forum", "source_id": "demo-forum",
-                           "retrieved": "2026-10-11", "synthetic": True,
-                           "weight": float(rng.randint(1, 40))})
+            demand.append(
+                {
+                    "text": rng.choice(FORUM_FORMS).format(npa=npa),
+                    "surface": "forum",
+                    "source_id": "demo-forum",
+                    "retrieved": "2026-10-11",
+                    "synthetic": True,
+                    "weight": float(rng.randint(1, 40)),
+                }
+            )
         for _ in range(min(4, int(pop[npa] / 3))):
-            demand.append({"text": rng.choice(VIDEO_FORMS).format(npa=npa),
-                           "surface": "video_short", "source_id": "demo-video",
-                           "retrieved": "2026-10-11", "synthetic": True,
-                           "weight": float(rng.randint(100, 50000))})
+            demand.append(
+                {
+                    "text": rng.choice(VIDEO_FORMS).format(npa=npa),
+                    "surface": "video_short",
+                    "source_id": "demo-video",
+                    "retrieved": "2026-10-11",
+                    "synthetic": True,
+                    "weight": float(rng.randint(100, 50000)),
+                }
+            )
         for _ in range(min(3, int(pop[npa] / 5))):
-            demand.append({"text": rng.choice(REVIEW_FORMS).format(npa=npa),
-                           "surface": "review_gmb", "source_id": "demo-gmb",
-                           "retrieved": "2026-10-11", "synthetic": True, "weight": 1.0})
+            demand.append(
+                {
+                    "text": rng.choice(REVIEW_FORMS).format(npa=npa),
+                    "surface": "review_gmb",
+                    "source_id": "demo-gmb",
+                    "retrieved": "2026-10-11",
+                    "synthetic": True,
+                    "weight": 1.0,
+                }
+            )
         for _ in range(min(2, int(pop[npa] / 4))):
-            demand.append({"text": rng.choice(PAA_FORMS).format(npa=npa),
-                           "surface": "people_also_ask", "source_id": "demo-paa",
-                           "retrieved": "2026-10-11", "synthetic": True, "weight": 1.0})
+            demand.append(
+                {
+                    "text": rng.choice(PAA_FORMS).format(npa=npa),
+                    "surface": "people_also_ask",
+                    "source_id": "demo-paa",
+                    "retrieved": "2026-10-11",
+                    "synthetic": True,
+                    "weight": 1.0,
+                }
+            )
     rng.shuffle(demand)
-    (HERE / "data" / "demo_demand.json").write_text(
-        json.dumps(demand, indent=1), encoding="utf-8")
+    (HERE / "data" / "demo_demand.json").write_text(json.dumps(demand, indent=1), encoding="utf-8")
 
     # Reported search volume, kept separate from question counts. Without this
     # the volume baseline B1 and the question-mining baseline B3 are fed the
     # same numbers and trivially agree, which makes the comparison between them
     # meaningless and flattering.
-    volumes = {r["npa"]: round(pop[r["npa"]] * rng.uniform(200, 4000))
-               for r in geo}
+    volumes = {r["npa"]: round(pop[r["npa"]] * rng.uniform(200, 4000)) for r in geo}
     (HERE / "data" / "demo_volumes.json").write_text(
-        json.dumps(volumes, indent=1), encoding="utf-8")
+        json.dumps(volumes, indent=1), encoding="utf-8"
+    )
 
     # Evidence strings the RuleJudge reads. The judge gives full credit when the
     # evidence names the answer, partial when it is vague, none when empty.
-    own, competitor, serp = {}, {"directory-a": {}, "directory-b": {},
-                                 "carrier-x": {}}, {}
+    own, competitor, serp = {}, {"directory-a": {}, "directory-b": {}, "carrier-x": {}}, {}
     for r in geo:
         npa, eid = r["npa"], f"npa:{r['npa']}"
         place, tz = r["principal_place"], r["predominant_time_zone"]
@@ -90,7 +119,8 @@ def main() -> int:
         # Directories cover most codes; one carrier covers almost none.
         if rng.random() < 0.85:
             competitor["directory-a"][eid] = (
-                f"Area code {npa} is located in {place}. Time zone {tz}.")
+                f"Area code {npa} is located in {place}. Time zone {tz}."
+            )
         if rng.random() < 0.6:
             competitor["directory-b"][eid] = f"{npa} area code information page"
         if rng.random() < 0.05:
@@ -105,15 +135,21 @@ def main() -> int:
         for v, ok, body in (
             (f"area code {npa} time zone", answered_tz, f"{npa} is in {tz}"),
             (f"what time zone is {npa}", answered_tz, f"time zone of {npa}: {tz}"),
-            (f"is {npa} eastern time", answered_tz and tz.endswith("New_York"),
-             f"{npa} observes {tz}"),
+            (
+                f"is {npa} eastern time",
+                answered_tz and tz.endswith("New_York"),
+                f"{npa} observes {tz}",
+            ),
             (f"what time is it in area code {npa}", False, ""),
             (f"area code {npa} location", answered_loc, f"{npa} serves {place}"),
             (f"where is area code {npa}", answered_loc, f"{npa} is in {place}"),
             (f"what city is area code {npa}", answered_loc, f"city: {place}"),
             (f"{npa} area code what state", answered_loc, f"state: {r['state']}"),
-            (f"area codes that overlay {npa}", answered_ov,
-             f"{npa} overlays {r['overlay_complex'] or 'none'}"),
+            (
+                f"area codes that overlay {npa}",
+                answered_ov,
+                f"{npa} overlays {r['overlay_complex'] or 'none'}",
+            ),
             (f"{npa} overlay area code", answered_ov, f"overlay complex for {npa}"),
             (f"what area code covers the same area as {npa}", False, ""),
             (f"who called me from {npa}", answered_car, f"carriers in {npa}"),
@@ -122,13 +158,15 @@ def main() -> int:
         ):
             serp[v] = body if ok else ""
     (HERE / "data" / "demo_evidence.json").write_text(
-        json.dumps({"own": own, "competitor": competitor, "serp": serp}, indent=1),
-        encoding="utf-8")
+        json.dumps({"own": own, "competitor": competitor, "serp": serp}, indent=1), encoding="utf-8"
+    )
 
     print(f"wrote {len(demand)} synthetic demand records")
     print(f"wrote {len(volumes)} synthetic reported-volume rows")
-    print(f"wrote evidence: own {len(own)}, "
-          f"competitor {sum(len(v) for v in competitor.values())}, serp {len(serp)}")
+    print(
+        f"wrote evidence: own {len(own)}, "
+        f"competitor {sum(len(v) for v in competitor.values())}, serp {len(serp)}"
+    )
     print("SYNTHETIC: for pipeline demonstration only, not observations")
     return 0
 

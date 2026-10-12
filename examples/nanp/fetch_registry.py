@@ -13,20 +13,20 @@ whose inputs change under it is not reproducible.
 If the network is unavailable, the script says so and exits non-zero. It does
 not fall back to the bundled file and report success.
 """
+
 from __future__ import annotations
 
 import hashlib
 import json
 import sys
-from datetime import date, timezone, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 HERE = Path(__file__).resolve().parent
 SOURCES = [
-    ("nanpa-co-code-registry",
-     "https://www.nationalnanpa.com/nanp1/npa_report.csv"),
+    ("nanpa-co-code-registry", "https://www.nationalnanpa.com/nanp1/npa_report.csv"),
 ]
 TIMEOUT = 60
 
@@ -52,25 +52,32 @@ def main() -> int:
         digest = hashlib.sha256(body).hexdigest()
         target = out_dir / f"{source_id}.csv"
         target.write_bytes(body)
-        manifest.append({
-            "source_id": source_id, "url": url, "bytes": len(body),
-            "sha256": digest,
-            "retrieved": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "path": str(target.relative_to(HERE)),
-        })
+        manifest.append(
+            {
+                "source_id": source_id,
+                "url": url,
+                "bytes": len(body),
+                "sha256": digest,
+                "retrieved": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "path": str(target.relative_to(HERE)),
+            }
+        )
         print(f"{source_id}: {len(body)} bytes, sha256 {digest[:16]}… → {target}")
     if manifest:
-        (out_dir / "manifest.json").write_text(
-            json.dumps(manifest, indent=1), encoding="utf-8")
+        (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     if failures:
-        print("\nThe bundled subset in data/area_codes.csv is unchanged and the "
-              "worked example still runs. It is a subset: treat any count taken "
-              "from it as a count over 66 codes, not over the full plan.",
-              file=sys.stderr)
+        print(
+            "\nThe bundled subset in data/area_codes.csv is unchanged and the "
+            "worked example still runs. It is a subset: treat any count taken "
+            "from it as a count over 66 codes, not over the full plan.",
+            file=sys.stderr,
+        )
         return 1
-    print("\nWrote data/registry/. The bundled subset is untouched; diff them "
-          "before using the full file, because column names change between "
-          "revisions of the published report.")
+    print(
+        "\nWrote data/registry/. The bundled subset is untouched; diff them "
+        "before using the full file, because column names change between "
+        "revisions of the published report."
+    )
     return 0
 
 

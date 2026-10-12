@@ -13,16 +13,20 @@ property; a partition without a covering axiom; a competency question whose
 relation is not in the ontology; and a core class with no instances, which makes
 topic-sensitive PageRank teleport to the empty set.
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import re
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
 from .types import CompetencyQuestion, stable_hash
+
+if TYPE_CHECKING:
+    from .graph import KnowledgeGraph
 
 
 @dataclass
@@ -30,8 +34,8 @@ class ClassSpec:
     name: str
     parent: str | None = None
     disjoint_with: tuple[str, ...] = ()
-    covered_by: tuple[str, ...] = ()      # partition: this class = union of these
-    key: tuple[str, ...] = ()             # HasKey: the identity criterion
+    covered_by: tuple[str, ...] = ()  # partition: this class = union of these
+    key: tuple[str, ...] = ()  # HasKey: the identity criterion
     defined_by: dict = field(default_factory=dict)  # equivalence so a reasoner can classify
     align: dict[str, str] = field(default_factory=dict)
     note: str = ""
@@ -42,7 +46,7 @@ class PropertySpec:
     name: str
     domain: str
     range: str
-    kind: str = "object"          # "object" or "data"
+    kind: str = "object"  # "object" or "data"
     functional: bool = False
     symmetric: bool = False
     asymmetric: bool = False
@@ -95,12 +99,12 @@ class Ontology:
 
     # ---------------------------------------------------------------- loading
     @classmethod
-    def from_yaml(cls, path: str | Path) -> "Ontology":
+    def from_yaml(cls, path: str | Path) -> Ontology:
         raw = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         return cls.from_dict(raw)
 
     @classmethod
-    def from_dict(cls, raw: dict[str, Any]) -> "Ontology":
+    def from_dict(cls, raw: dict[str, Any]) -> Ontology:
         classes = {}
         for name, spec in (raw.get("classes") or {}).items():
             spec = spec or {}
@@ -121,8 +125,9 @@ class Ontology:
                 name=name,
                 domain=spec["domain"],
                 range=spec["range"],
-                kind=spec.get("kind", "data" if str(spec["range"]).startswith("xsd:")
-                              else "object"),
+                kind=spec.get(
+                    "kind", "data" if str(spec["range"]).startswith("xsd:") else "object"
+                ),
                 functional=bool(spec.get("functional", False)),
                 symmetric=bool(spec.get("symmetric", False)),
                 asymmetric=bool(spec.get("asymmetric", False)),
@@ -138,19 +143,21 @@ class Ontology:
             )
         questions = []
         for q in raw.get("competency_questions") or []:
-            questions.append(CompetencyQuestion(
-                id=q["id"],
-                template=q["template"],
-                relation=q.get("relation") or "",
-                pattern=q.get("pattern", "lookup"),
-                verbalizations=tuple(q.get("verbalizations") or ()),
-                sparql=q.get("sparql", ""),
-                source=q.get("source", ""),
-                asks_about=q.get("asks_about", ""),
-                chain=tuple(q.get("chain") or ()),
-                unsupported=q.get("unsupported", ""),
-                answer_class=q.get("answer_class", ""),
-            ))
+            questions.append(
+                CompetencyQuestion(
+                    id=q["id"],
+                    template=q["template"],
+                    relation=q.get("relation") or "",
+                    pattern=q.get("pattern", "lookup"),
+                    verbalizations=tuple(q.get("verbalizations") or ()),
+                    sparql=q.get("sparql", ""),
+                    source=q.get("source", ""),
+                    asks_about=q.get("asks_about", ""),
+                    chain=tuple(q.get("chain") or ()),
+                    unsupported=q.get("unsupported", ""),
+                    answer_class=q.get("answer_class", ""),
+                )
+            )
         return cls(
             name=raw.get("name", "unnamed"),
             version=str(raw.get("version", "0")),
@@ -203,18 +210,23 @@ class Ontology:
                     fatal.append(f"class {name}: covered_by {sub!r} is not defined")
             if not c.covered_by:
                 kids = [k for k, v in self.classes.items() if v.parent == name]
-                disjoint_kids = [k for k in kids
-                                 if any(o in kids for o in self.classes[k].disjoint_with)]
+                disjoint_kids = [
+                    k for k in kids if any(o in kids for o in self.classes[k].disjoint_with)
+                ]
                 if len(disjoint_kids) >= 2:
                     problems.append(
                         f"class {name}: subclasses {sorted(disjoint_kids)} are declared "
                         "disjoint but no covering axiom is given, so the split is not a "
-                        "partition and nothing can be inferred from it. Add covered_by.")
+                        "partition and nothing can be inferred from it. Add covered_by."
+                    )
 
         for name, p in self.properties.items():
             for role, target in (("domain", p.domain), ("range", p.range)):
-                if target not in self.classes and not target.startswith("xsd:") \
-                        and not target.startswith("ext:"):
+                if (
+                    target not in self.classes
+                    and not target.startswith("xsd:")
+                    and not target.startswith("ext:")
+                ):
                     fatal.append(f"property {name}: {role} {target!r} is not defined")
             if p.sub_property_of and p.sub_property_of not in self.properties:
                 fatal.append(f"property {name}: sub_property_of {p.sub_property_of!r} undefined")
@@ -223,11 +235,14 @@ class Ontology:
             if p.symmetric and p.asymmetric:
                 fatal.append(f"property {name}: declared both symmetric and asymmetric")
             if p.transitive and p.functional:
-                problems.append(f"property {name}: transitive and functional together "
-                                "force every chain to collapse to one value")
+                problems.append(
+                    f"property {name}: transitive and functional together "
+                    "force every chain to collapse to one value"
+                )
             if p.functional and p.max_cardinality not in (None, 1):
-                problems.append(f"property {name}: functional but max_cardinality="
-                                f"{p.max_cardinality}")
+                problems.append(
+                    f"property {name}: functional but max_cardinality={p.max_cardinality}"
+                )
             # The alignment trap: equating a specialised property with a general
             # external one lets the external data entail membership of our domain.
             eq = p.align.get("owl:equivalentProperty")
@@ -236,51 +251,63 @@ class Ontology:
                     f"property {name}: declared owl:equivalentProperty {eq} while its "
                     f"domain is the specialised class {p.domain}. Loading the external "
                     f"data would entail that every subject of {eq} is a {p.domain}. "
-                    "Use rdfs:subPropertyOf, or widen the domain.")
+                    "Use rdfs:subPropertyOf, or widen the domain."
+                )
             if p.symmetric and p.transitive is False and p.note.lower().find("complex") >= 0:
                 problems.append(
                     f"property {name}: symmetric but not transitive, while its note "
                     "describes membership of a complex. Group membership needs "
-                    "transitivity or an explicit grouping class.")
+                    "transitivity or an explicit grouping class."
+                )
 
         for q in self.questions:
             if q.unsupported:
-                pass            # a declared gap, checked below, not a defect
+                pass  # a declared gap, checked below, not a defect
             elif q.chain:
                 from .cq import validate_chain
-                for prob in validate_chain(q, self):
-                    fatal.append(prob)
+
+                fatal.extend(validate_chain(q, self))
             elif q.relation not in self.properties:
                 fatal.append(f"competency question {q.id}: relation {q.relation!r} undefined")
             if not q.verbalizations:
-                problems.append(f"competency question {q.id}: no verbalizations, so "
-                                "answerability would be judged on one phrasing only")
+                problems.append(
+                    f"competency question {q.id}: no verbalizations, so "
+                    "answerability would be judged on one phrasing only"
+                )
             elif len(q.verbalizations) < 3:
-                problems.append(f"competency question {q.id}: only "
-                                f"{len(q.verbalizations)} verbalizations; the method "
-                                "specifies at least three")
+                problems.append(
+                    f"competency question {q.id}: only "
+                    f"{len(q.verbalizations)} verbalizations; the method "
+                    "specifies at least three"
+                )
             target = q.subject_class(self.properties)
             if target and target not in self.classes and not target.startswith("ext:"):
-                fatal.append(f"competency question {q.id}: asks about {target!r}, "
-                             "which is not a class")
+                fatal.append(
+                    f"competency question {q.id}: asks about {target!r}, which is not a class"
+                )
             if q.unsupported and q.relation:
-                problems.append(f"competency question {q.id}: marked unsupported "
-                                f"but still names relation {q.relation!r}; an "
-                                "unsupported question should name no relation, so "
-                                "that a reader cannot mistake it for answerable")
+                problems.append(
+                    f"competency question {q.id}: marked unsupported "
+                    f"but still names relation {q.relation!r}; an "
+                    "unsupported question should name no relation, so "
+                    "that a reader cannot mistake it for answerable"
+                )
             if not q.unsupported and not q.relation and not q.chain and not q.sparql:
-                fatal.append(f"competency question {q.id}: no relation, chain or "
-                             "sparql, and not marked unsupported, so nothing can "
-                             "execute it and no pass rate can include it")
+                fatal.append(
+                    f"competency question {q.id}: no relation, chain or "
+                    "sparql, and not marked unsupported, so nothing can "
+                    "execute it and no pass rate can include it"
+                )
             if q.pattern == "inverse" and not q.asks_about:
                 problems.append(
                     f"competency question {q.id}: inverse pattern with no "
                     "asks_about, so it is attributed to the relation's range by "
-                    "inference. State asks_about to make the attribution explicit.")
+                    "inference. State asks_about to make the attribution explicit."
+                )
 
-        for c in self.core_classes:
-            if c not in self.classes:
-                fatal.append(f"core class {c!r} is not defined")
+        for core in self.core_classes:
+            if core not in self.classes:
+                fatal.append(f"core class {core!r} is not defined")
 
         if not self.core_classes:
             fatal.append("no core classes: the relatedness teleport set would be empty")
@@ -296,16 +323,18 @@ class Ontology:
     # ---------------------------------------------------------------- export
     def fingerprint(self) -> str:
         return stable_hash(
-            self.name, self.version,
+            self.name,
+            self.version,
             sorted((k, v.parent, v.covered_by) for k, v in self.classes.items()),
-            sorted((k, v.domain, v.range, v.functional, v.symmetric)
-                   for k, v in self.properties.items()),
+            sorted(
+                (k, v.domain, v.range, v.functional, v.symmetric)
+                for k, v in self.properties.items()
+            ),
             tuple(sorted(self.core_classes)),
             tuple(sorted(q.id for q in self.questions)),
         )
 
-    def to_owl(self, individuals: "KnowledgeGraph | None" = None,
-               base: str | None = None) -> str:
+    def to_owl(self, individuals: KnowledgeGraph | None = None, base: str | None = None) -> str:
         """Emit OWL 2 functional syntax that a reasoner can load.
 
         An earlier version of this method dropped every property alignment and
@@ -318,25 +347,27 @@ class Ontology:
         mistaken for a clean validation.
         """
         base = base or default_base(self.name)
-        ext = {"ext": "http://www.w3.org/2002/07/owl#Thing"}
-        L = [f"Prefix(:=<{base}#>)",
-             "Prefix(owl:=<http://www.w3.org/2002/07/owl#>)",
-             "Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)",
-             "Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)",
-             "Prefix(skos:=<http://www.w3.org/2004/02/skos/core#>)",
-             "Prefix(dcterms:=<http://purl.org/dc/terms/>)",
-             "Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)",
-             "Prefix(ext:=<http://schema.org/>)",
-             "", f"Ontology(<{base}> <{base}/{self.version}>",
-             f'  Annotation(rdfs:label "{self.name} {self.version}")',
-             '  Annotation(dcterms:license <http://creativecommons.org/licenses/by/4.0/>)',
-             "  Declaration(AnnotationProperty(skos:exactMatch))",
-             "  Declaration(AnnotationProperty(skos:closeMatch))",
-             "  Declaration(AnnotationProperty(rdfs:subPropertyOf))"]
+        L = [
+            f"Prefix(:=<{base}#>)",
+            "Prefix(owl:=<http://www.w3.org/2002/07/owl#>)",
+            "Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)",
+            "Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)",
+            "Prefix(skos:=<http://www.w3.org/2004/02/skos/core#>)",
+            "Prefix(dcterms:=<http://purl.org/dc/terms/>)",
+            "Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)",
+            "Prefix(ext:=<http://schema.org/>)",
+            "",
+            f"Ontology(<{base}> <{base}/{self.version}>",
+            f'  Annotation(rdfs:label "{self.name} {self.version}")',
+            "  Annotation(dcterms:license <http://creativecommons.org/licenses/by/4.0/>)",
+            "  Declaration(AnnotationProperty(skos:exactMatch))",
+            "  Declaration(AnnotationProperty(skos:closeMatch))",
+            "  Declaration(AnnotationProperty(rdfs:subPropertyOf))",
+        ]
 
         def iri(name: str) -> str:
             if name.startswith("ext:"):
-                return name                      # a declared prefix, not a bare name
+                return name  # a declared prefix, not a bare name
             if name.startswith("xsd:"):
                 return name
             return f":{name}"
@@ -352,22 +383,26 @@ class Ontology:
                 parts = " ".join(f":{x}" for x in c.covered_by)
                 L.append(f"  EquivalentClasses(:{name} ObjectUnionOf({parts}))")
             if c.defined_by:
-                parts = []
+                conj = []
                 for anc in c.defined_by.get("and", []):
-                    parts.append(f":{anc}")
+                    conj.append(f":{anc}")
                 for prop, rng in (c.defined_by.get("some") or {}).items():
-                    parts.append(f"ObjectSomeValuesFrom(:{prop} :{rng})")
-                if len(parts) == 1:
-                    L.append(f"  EquivalentClasses(:{name} {parts[0]})")
-                elif parts:
-                    L.append(f"  EquivalentClasses(:{name} "
-                             f"ObjectIntersectionOf({' '.join(parts)}))")
+                    conj.append(f"ObjectSomeValuesFrom(:{prop} :{rng})")
+                if len(conj) == 1:
+                    L.append(f"  EquivalentClasses(:{name} {conj[0]})")
+                elif conj:
+                    L.append(f"  EquivalentClasses(:{name} ObjectIntersectionOf({' '.join(conj)}))")
             if c.key:
-                props = " ".join(f":{k}" for k in c.key)
-                obj = " ".join(f":{k}" for k in c.key
-                               if self.properties.get(k, PropertySpec(k, "", "")).kind == "object")
-                dat = " ".join(f":{k}" for k in c.key
-                               if self.properties.get(k, PropertySpec(k, "", "")).kind == "data")
+                obj = " ".join(
+                    f":{k}"
+                    for k in c.key
+                    if self.properties.get(k, PropertySpec(k, "", "")).kind == "object"
+                )
+                dat = " ".join(
+                    f":{k}"
+                    for k in c.key
+                    if self.properties.get(k, PropertySpec(k, "", "")).kind == "data"
+                )
                 L.append(f"  HasKey(:{name} ({obj}) ({dat}))")
             if c.note:
                 L.append(f'  AnnotationAssertion(rdfs:comment :{name} "{_esc(c.note)}")')
@@ -399,8 +434,7 @@ class Ontology:
                 L.append(f"  Sub{decl}Of(:{name} :{p.sub_property_of})")
             if p.min_cardinality:
                 card = "ObjectMinCardinality" if p.kind == "object" else "DataMinCardinality"
-                L.append(f"  SubClassOf({iri(p.domain)} {card}("
-                         f"{p.min_cardinality} :{name}))")
+                L.append(f"  SubClassOf({iri(p.domain)} {card}({p.min_cardinality} :{name}))")
             # The alignment corrections this ontology demonstrates live here.
             for pred, target in p.align.items():
                 L.append(f"  AnnotationAssertion({pred} :{name} <{target}>)")
@@ -413,8 +447,7 @@ class Ontology:
                 L.append(f"  Declaration(NamedIndividual(:{_safe(e.id)}))")
                 L.append(f"  ClassAssertion(:{e.cls} :{_safe(e.id)})")
                 if e.label:
-                    L.append(f'  AnnotationAssertion(rdfs:label :{_safe(e.id)} '
-                             f'"{_esc(e.label)}")')
+                    L.append(f'  AnnotationAssertion(rdfs:label :{_safe(e.id)} "{_esc(e.label)}")')
                 named_by_class.setdefault(e.cls, []).append(_safe(e.id))
             for t in individuals.triples:
                 if t.predicate not in self.properties:
@@ -423,28 +456,33 @@ class Ontology:
                 if spec.derived:
                     continue
                 if spec.kind == "data" or t.object.startswith("lit:"):
-                    val = t.object[4:] if t.object.startswith("lit:") else t.object
-                    L.append(f'  DataPropertyAssertion(:{t.predicate} '
-                             f':{_safe(t.subject)} "{_esc(val)}")')
+                    val = t.object.removeprefix("lit:")
+                    L.append(
+                        f'  DataPropertyAssertion(:{t.predicate} :{_safe(t.subject)} "{_esc(val)}")'
+                    )
                 else:
-                    L.append(f"  ObjectPropertyAssertion(:{t.predicate} "
-                             f":{_safe(t.subject)} :{_safe(t.object)})")
+                    L.append(
+                        f"  ObjectPropertyAssertion(:{t.predicate} "
+                        f":{_safe(t.subject)} :{_safe(t.object)})"
+                    )
             # Without this, a functional property silently merges two values
             # instead of reporting the inconsistency it exists to catch.
             for cls in ("TimeZone", "Place", "OverlayComplex"):
                 members = named_by_class.get(cls, [])
                 if len(members) > 1:
-                    L.append("  DifferentIndividuals(" +
-                             " ".join(f":{m}" for m in members) + ")")
+                    L.append("  DifferentIndividuals(" + " ".join(f":{m}" for m in members) + ")")
         L.append(")")
         return "\n".join(L)
 
     def to_shacl(self, base: str | None = None) -> str:
         """Emit SHACL shapes for the cardinalities the ontology declares."""
         base = base or default_base(self.name)
-        L = ["@prefix sh: <http://www.w3.org/ns/shacl#> .",
-             "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .",
-             f"@prefix : <{base}#> .", ""]
+        L = [
+            "@prefix sh: <http://www.w3.org/ns/shacl#> .",
+            "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .",
+            f"@prefix : <{base}#> .",
+            "",
+        ]
         by_domain: dict[str, list[PropertySpec]] = {}
         for p in self.properties.values():
             if not p.derived and (p.min_cardinality or p.max_cardinality or p.functional):

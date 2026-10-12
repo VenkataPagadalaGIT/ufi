@@ -10,7 +10,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/VenkataPagadalaGIT/ufi/actions/workflows/ci.yml"><img src="https://github.com/VenkataPagadalaGIT/ufi/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="tests/"><img src="https://img.shields.io/badge/tests-61%20passing-brightgreen" alt="tests"></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/coverage-70%25-yellowgreen" alt="coverage"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.10%E2%80%933.13-blue" alt="python"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/badge/lint-ruff-261230" alt="ruff"></a>
+  <a href="https://mypy-lang.org/"><img src="https://img.shields.io/badge/types-mypy%20clean-blue" alt="mypy"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-blue" alt="licence"></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/version-0.2.0-lightgrey" alt="version"></a>
   <a href="paper/"><img src="https://img.shields.io/badge/paper-preprint%20v4.8-orange" alt="paper"></a>
@@ -160,11 +165,14 @@ cd data/instrument_divergence && python analyze.py
 - The entity linker is longest-match over aliases: adequate for identifiers, not for ambiguous names.
 - The NANP ontology is a nine-class sketch, not yet a resource-grade vocabulary; terms are minted under `urn:ufi:` because no persistent namespace has been registered, and the package has no DOI yet.
 
-## Tests
+## Development
 
 ```bash
-python -m pytest -q        # 61 passed
+make install     # editable install with dev tools
+make all         # lint, types, tests with coverage, the example, digest verification
 ```
+
+CI runs the same on every push across Python 3.10 to 3.13, and additionally checks that the worked example is deterministic across two runs and that `analyze.py` still reproduces the paper's statistics. `pre-commit install` enables the same lint and format hooks locally.
 
 ## Contributing, citing, licence
 

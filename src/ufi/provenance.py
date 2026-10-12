@@ -15,15 +15,17 @@ seen.
 cache, the parameters and the frozen query set, together with the package
 version. Two runs with the same manifest produce the same numbers.
 """
+
 from __future__ import annotations
 
 import json
 import platform
 import sys
-from dataclasses import dataclass, asdict, field
+from collections.abc import Sequence
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 from .types import stable_hash
 
@@ -32,18 +34,23 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def freeze_queries(queries: Sequence[str], path: str | Path,
-                   note: str = "") -> dict[str, Any]:
+def freeze_queries(queries: Sequence[str], path: str | Path, note: str = "") -> dict[str, Any]:
     """Write the evaluation query set with a hash. Refuses to overwrite."""
     p = Path(path)
     if p.exists():
         raise FileExistsError(
             f"{p} already exists. A frozen query set is not rewritten: that is "
             "the entire point of freezing it. Write a new file with a new name "
-            "and report both.")
-    qs = sorted(set(q.strip() for q in queries if q.strip()))
-    payload = {"frozen_at": _now(), "n": len(qs), "hash": stable_hash(qs),
-               "note": note, "queries": qs}
+            "and report both."
+        )
+    qs = sorted({q.strip() for q in queries if q.strip()})
+    payload = {
+        "frozen_at": _now(),
+        "n": len(qs),
+        "hash": stable_hash(qs),
+        "note": note,
+        "queries": qs,
+    }
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(payload, indent=1), encoding="utf-8")
     return {k: v for k, v in payload.items() if k != "queries"}
@@ -52,9 +59,13 @@ def freeze_queries(queries: Sequence[str], path: str | Path,
 def verify_frozen(path: str | Path) -> dict[str, Any]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     recomputed = stable_hash(payload["queries"])
-    return {"path": str(path), "frozen_at": payload["frozen_at"],
-            "n": payload["n"], "hash": payload["hash"],
-            "intact": recomputed == payload["hash"]}
+    return {
+        "path": str(path),
+        "frozen_at": payload["frozen_at"],
+        "n": payload["n"],
+        "hash": payload["hash"],
+        "intact": recomputed == payload["hash"],
+    }
 
 
 def lock_parameters(params: Any, path: str | Path, note: str = "") -> dict[str, Any]:
@@ -62,8 +73,12 @@ def lock_parameters(params: Any, path: str | Path, note: str = "") -> dict[str, 
     if p.exists():
         raise FileExistsError(f"{p} already exists; parameters are locked once.")
     d = asdict(params) if hasattr(params, "__dataclass_fields__") else dict(params)
-    payload = {"locked_at": _now(), "hash": stable_hash(sorted(d.items())),
-               "note": note, "parameters": d}
+    payload = {
+        "locked_at": _now(),
+        "hash": stable_hash(sorted(d.items())),
+        "note": note,
+        "parameters": d,
+    }
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(payload, indent=1), encoding="utf-8")
     return payload
@@ -97,6 +112,10 @@ class RunManifest:
         p.write_text(json.dumps(asdict(self), indent=1), encoding="utf-8")
 
     def digest(self) -> str:
-        return stable_hash(self.ontology_fingerprint, self.graph_fingerprint,
-                           self.cache_fingerprint, self.parameters_hash,
-                           self.frozen_queries_hash)
+        return stable_hash(
+            self.ontology_fingerprint,
+            self.graph_fingerprint,
+            self.cache_fingerprint,
+            self.parameters_hash,
+            self.frozen_queries_hash,
+        )

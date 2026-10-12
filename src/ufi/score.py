@@ -19,19 +19,17 @@ answer this". It does not switch between two kinds of gap: an entity can score
 high on both, and `instance_gap` / `schema_gap` are reported separately by
 `score_entities` so a reader can see which term carried the score.
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Iterable, Mapping, Sequence
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 
 import networkx as nx
 
-from .types import Grade
-
 
 # --------------------------------------------------------------------- parts
-def rank_normalize(values: Mapping[str, float], higher_is_better: bool = True
-                   ) -> dict[str, float]:
+def rank_normalize(values: Mapping[str, float], higher_is_better: bool = True) -> dict[str, float]:
     """Map values to [0,1] by rank. Ties share the mean of their ranks.
 
     The top entity scores 1.0 and the bottom 0.0; with a single entity the
@@ -57,9 +55,13 @@ def rank_normalize(values: Mapping[str, float], higher_is_better: bool = True
     return out
 
 
-def relatedness(structure_graph: nx.Graph, core_nodes: Sequence[str],
-                damping: float = 0.85, tol: float = 1e-8,
-                max_iter: int = 200) -> dict[str, float]:
+def relatedness(
+    structure_graph: nx.Graph,
+    core_nodes: Sequence[str],
+    damping: float = 0.85,
+    tol: float = 1e-8,
+    max_iter: int = 200,
+) -> dict[str, float]:
     """Topic-sensitive PageRank over the structure graph, rank-normalized.
 
     `core_nodes` is the teleport set S: the instances of the ontology's core
@@ -76,10 +78,12 @@ def relatedness(structure_graph: nx.Graph, core_nodes: Sequence[str],
             "none of the core-class instances are present in the structure graph, "
             "so the teleport set is empty. Either the entity layer was not "
             "populated, or the core classes name classes with no instances. "
-            "Relatedness is undefined in both cases.")
+            "Relatedness is undefined in both cases."
+        )
     personalization = {n: (1.0 / len(present) if n in set(present) else 0.0) for n in nodes}
-    pr = nx.pagerank(structure_graph, alpha=damping, personalization=personalization,
-                     tol=tol, max_iter=max_iter)
+    pr = nx.pagerank(
+        structure_graph, alpha=damping, personalization=personalization, tol=tol, max_iter=max_iter
+    )
     return rank_normalize(pr)
 
 
@@ -88,8 +92,7 @@ def demand(counts: Mapping[str, float]) -> dict[str, float]:
     return rank_normalize(counts)
 
 
-def prior(rel: Mapping[str, float], dem: Mapping[str, float], beta: float
-          ) -> dict[str, float]:
+def prior(rel: Mapping[str, float], dem: Mapping[str, float], beta: float) -> dict[str, float]:
     """beta weights structure against demand. beta=1 is the structure-only ablation.
 
     Combined arithmetically so an entity with no observed questions is
@@ -116,12 +119,17 @@ class EntityScore:
 
     def as_row(self) -> dict:
         return {
-            "entity": self.entity, "cgs": round(self.cgs, 6),
-            "prior": round(self.prior, 6), "rel": round(self.rel, 6),
-            "dem": round(self.dem, 6), "own": self.own, "cov_k": round(self.cov_k, 4),
+            "entity": self.entity,
+            "cgs": round(self.cgs, 6),
+            "prior": round(self.prior, 6),
+            "rel": round(self.rel, 6),
+            "dem": round(self.dem, 6),
+            "own": self.own,
+            "cov_k": round(self.cov_k, 4),
             "mean_ans": round(self.mean_ans, 4),
             "instance_gap": round(self.instance_gap, 6),
-            "schema_gap": round(self.schema_gap, 6), "n_questions": self.n_questions,
+            "schema_gap": round(self.schema_gap, 6),
+            "n_questions": self.n_questions,
         }
 
 
@@ -133,23 +141,27 @@ class Parameters:
     beta: float = 0.5
     damping: float = 0.85
     min_verbalizations: int = 3
-    class_aggregate: str = "mean"      # mean is primary; sum is reported alongside
+    class_aggregate: str = "mean"  # mean is primary; sum is reported alongside
 
     def validate(self) -> None:
-        for n, v in (("alpha", self.alpha), ("beta", self.beta),
-                     ("damping", self.damping)):
+        for n, v in (("alpha", self.alpha), ("beta", self.beta), ("damping", self.damping)):
             if not 0.0 <= v <= 1.0:
                 raise ValueError(f"{n} must be in [0,1], got {v}")
         if self.class_aggregate not in ("mean", "sum"):
             raise ValueError("class_aggregate must be 'mean' or 'sum'")
 
 
-def score_entities(entities: Sequence[str], rel: Mapping[str, float],
-                   dem: Mapping[str, float], own: Mapping[str, float],
-                   cov_k: Mapping[str, float],
-                   ans: Mapping[str, Mapping[str, float]],
-                   params: Parameters = Parameters()) -> list[EntityScore]:
+def score_entities(
+    entities: Sequence[str],
+    rel: Mapping[str, float],
+    dem: Mapping[str, float],
+    own: Mapping[str, float],
+    cov_k: Mapping[str, float],
+    ans: Mapping[str, Mapping[str, float]],
+    params: Parameters | None = None,
+) -> list[EntityScore]:
     """Score every entity. `ans` maps entity -> {question_id: grade}."""
+    params = params or Parameters()
     params.validate()
     pri = prior(rel, dem, params.beta)
     out: list[EntityScore] = []
@@ -161,21 +173,34 @@ def score_entities(entities: Sequence[str], rel: Mapping[str, float],
         deficit = params.alpha * inst + (1.0 - params.alpha) * schema
         p = pri.get(e, 0.0)
         o = own.get(e, 0.0)
-        out.append(EntityScore(
-            entity=e, cgs=p * (1.0 - o) * deficit, prior=p,
-            rel=rel.get(e, 0.0), dem=dem.get(e, 0.0), own=o,
-            cov_k=cov_k.get(e, 0.0), mean_ans=mean_ans,
-            instance_gap=p * (1.0 - o) * inst, schema_gap=p * (1.0 - o) * schema,
-            n_questions=len(a)))
+        out.append(
+            EntityScore(
+                entity=e,
+                cgs=p * (1.0 - o) * deficit,
+                prior=p,
+                rel=rel.get(e, 0.0),
+                dem=dem.get(e, 0.0),
+                own=o,
+                cov_k=cov_k.get(e, 0.0),
+                mean_ans=mean_ans,
+                instance_gap=p * (1.0 - o) * inst,
+                schema_gap=p * (1.0 - o) * schema,
+                n_questions=len(a),
+            )
+        )
     return sorted(out, key=lambda s: (-s.cgs, s.entity))
 
 
-def schema_gap_by_relation(entities_by_relation: Mapping[str, Sequence[str]],
-                           rel: Mapping[str, float], dem: Mapping[str, float],
-                           own: Mapping[str, float],
-                           ans_by_relation: Mapping[str, Mapping[str, float]],
-                           params: Parameters = Parameters()) -> dict[str, float]:
+def schema_gap_by_relation(
+    entities_by_relation: Mapping[str, Sequence[str]],
+    rel: Mapping[str, float],
+    dem: Mapping[str, float],
+    own: Mapping[str, float],
+    ans_by_relation: Mapping[str, Mapping[str, float]],
+    params: Parameters | None = None,
+) -> dict[str, float]:
     """SG(r): the relation-level gap, which is the claim 'no one answers X'."""
+    params = params or Parameters()
     pri = prior(rel, dem, params.beta)
     out: dict[str, float] = {}
     for r, ents in entities_by_relation.items():
@@ -183,13 +208,13 @@ def schema_gap_by_relation(entities_by_relation: Mapping[str, Sequence[str]],
             out[r] = 0.0
             continue
         grades = ans_by_relation.get(r, {})
-        out[r] = sum(pri.get(e, 0.0) * (1.0 - own.get(e, 0.0)) *
-                     (1.0 - grades.get(e, 0.0)) for e in ents) / len(ents)
+        out[r] = sum(
+            pri.get(e, 0.0) * (1.0 - own.get(e, 0.0)) * (1.0 - grades.get(e, 0.0)) for e in ents
+        ) / len(ents)
     return out
 
 
-def aggregate_to_class(scores: Sequence[EntityScore],
-                       class_of: Mapping[str, str]) -> list[dict]:
+def aggregate_to_class(scores: Sequence[EntityScore], class_of: Mapping[str, str]) -> list[dict]:
     """Class-level ranking. Mean is primary; sum and size are reported with it.
 
     The sum favours large enumerable classes by construction, which is exactly
@@ -203,12 +228,17 @@ def aggregate_to_class(scores: Sequence[EntityScore],
     for cls, ss in buckets.items():
         n = len(ss)
         tot = sum(s.cgs for s in ss)
-        rows.append({
-            "class": cls, "n": n, "mean_cgs": tot / n, "sum_cgs": tot,
-            "mean_instance_gap": sum(s.instance_gap for s in ss) / n,
-            "mean_schema_gap": sum(s.schema_gap for s in ss) / n,
-            "uncovered": sum(1 for s in ss if s.own == 0.0),
-        })
+        rows.append(
+            {
+                "class": cls,
+                "n": n,
+                "mean_cgs": tot / n,
+                "sum_cgs": tot,
+                "mean_instance_gap": sum(s.instance_gap for s in ss) / n,
+                "mean_schema_gap": sum(s.schema_gap for s in ss) / n,
+                "uncovered": sum(1 for s in ss if s.own == 0.0),
+            }
+        )
     return sorted(rows, key=lambda r: -r["mean_cgs"])
 
 
@@ -220,8 +250,7 @@ def kendall_tau(a: Sequence[str], b: Sequence[str]) -> float:
     untied pair count, which understates agreement in exactly the case this
     function is used for. With no ties the two coincide.
     """
-    return kendall_tau_scores({x: -i for i, x in enumerate(a)},
-                              {x: -i for i, x in enumerate(b)})
+    return kendall_tau_scores({x: -i for i, x in enumerate(a)}, {x: -i for i, x in enumerate(b)})
 
 
 def kendall_tau_scores(a: Mapping[str, float], b: Mapping[str, float]) -> float:

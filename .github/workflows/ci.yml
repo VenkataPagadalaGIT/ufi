@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: test (py${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]" pytest-cov
+      - run: python -m pytest -q --cov=ufi --cov-report=xml
+      - name: worked example runs offline and is deterministic
+        run: |
+          cd examples/nanp
+          python make_demo_inputs.py
+          python build_example.py | tee run1.txt
+          python build_example.py | tee run2.txt
+          grep "manifest digest" run1.txt
+          diff <(grep "manifest digest" run1.txt) <(grep "manifest digest" run2.txt)
+      - name: released digests still verify
+        run: |
+          ufi verify examples/nanp/out/frozen_queries.json
+          ufi manifest examples/nanp/out/manifest.json
+
+  lint:
+    name: lint and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]" ruff mypy
+      - run: ruff check src tests examples
+      - run: ruff format --check src tests examples
+      - run: mypy src/ufi
+
+  data:
+    name: paper statistics reproduce
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: cd data/instrument_divergence && python analyze.py

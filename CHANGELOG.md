@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- CI across Python 3.10 to 3.13 (tests, lint, types, deterministic example, released-digest verification, paper statistics).
+- Lint-clean under ruff, type-clean under mypy, formatted; explicit public API in `ufi.__init__`.
+- Fixed a variable reuse in the OWL exporter's defined-class block and a shadowed loop variable in validation.
+- `score_entities` / `schema_gap_by_relation` take `params=None` instead of a mutable default.
+- Pre-commit config, Makefile, issue and PR templates, security policy, code of conduct.
+
 ## 0.2.0 (12 October 2026)
 
 - Executable competency questions: property-chain validation, SPARQL

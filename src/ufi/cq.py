@@ -26,12 +26,12 @@ domains and ranges through the path and reports a step that does not compose,
 which is the check that catches a question pointed at a property saying nothing
 about what the question asks.
 """
-from __future__ import annotations
 
-from .ontology import default_base
+from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .ontology import default_base
 from .types import CompetencyQuestion
 
 
@@ -42,10 +42,10 @@ class CQResult:
     id: str
     template: str
     supported: bool
-    reason: str = ""          # why unsupported, when it is
-    n_subjects: int = 0       # individuals of the subject class in the graph
-    n_answered: int = 0       # of those, how many the query answers
-    n_answers: int = 0        # total bindings, so fan-out is visible
+    reason: str = ""  # why unsupported, when it is
+    n_subjects: int = 0  # individuals of the subject class in the graph
+    n_answered: int = 0  # of those, how many the query answers
+    n_answers: int = 0  # total bindings, so fan-out is visible
     sparql: str = ""
 
     @property
@@ -96,33 +96,38 @@ def validate_chain(cq: CompetencyQuestion, onto) -> list[str]:
         name, inverse = _split(step)
         p = onto.properties.get(name)
         if p is None:
-            problems.append(
-                f"{cq.id} step {i}: property {name!r} is not defined")
+            problems.append(f"{cq.id} step {i}: property {name!r} is not defined")
             return problems
         entry, exit_ = (p.range, p.domain) if inverse else (p.domain, p.range)
-        if here in onto.classes and entry in onto.classes:
-            if not (onto.is_a(here, entry) or onto.is_a(entry, here)):
-                problems.append(
-                    f"{cq.id} step {i}: {step} enters at {entry} but the path "
-                    f"has reached {here}, and neither is a subclass of the "
-                    f"other, so the step does not compose")
-                return problems
+        if (
+            here in onto.classes
+            and entry in onto.classes
+            and not (onto.is_a(here, entry) or onto.is_a(entry, here))
+        ):
+            problems.append(
+                f"{cq.id} step {i}: {step} enters at {entry} but the path "
+                f"has reached {here}, and neither is a subclass of the "
+                f"other, so the step does not compose"
+            )
+            return problems
         here = exit_
     if cq.answer_class and here:
         want, got = cq.answer_class, here
-        known = (want in onto.classes or want.startswith(("ext:", "xsd:"))) \
-            and (got in onto.classes or got.startswith(("ext:", "xsd:")))
+        known = (want in onto.classes or want.startswith(("ext:", "xsd:"))) and (
+            got in onto.classes or got.startswith(("ext:", "xsd:"))
+        )
         if known and want != got:
             if want in onto.classes and got in onto.classes:
                 if not (onto.is_a(got, want) or onto.is_a(want, got)):
                     problems.append(
                         f"{cq.id}: the path ends at {got}, but the question asks "
                         f"for {want}. A path can compose and still answer a "
-                        f"different question than the one asked.")
+                        f"different question than the one asked."
+                    )
             else:
                 problems.append(
-                    f"{cq.id}: the path ends at {got}, but the question asks "
-                    f"for {want}.")
+                    f"{cq.id}: the path ends at {got}, but the question asks for {want}."
+                )
     return problems
 
 
@@ -141,12 +146,14 @@ def sparql_for(cq: CompetencyQuestion, onto, base: str) -> str:
     if not path or not subject:
         return ""
     rendered = "/".join(
-        f"^<{base}#{n}>" if inv else f"<{base}#{n}>"
-        for n, inv in (_split(s) for s in path))
-    return (f"SELECT ?s ?a WHERE {{\n"
-            f"  ?s a/rdfs:subClassOf* <{base}#{subject}> .\n"
-            f"  ?s {rendered} ?a .\n"
-            f"}}")
+        f"^<{base}#{n}>" if inv else f"<{base}#{n}>" for n, inv in (_split(s) for s in path)
+    )
+    return (
+        f"SELECT ?s ?a WHERE {{\n"
+        f"  ?s a/rdfs:subClassOf* <{base}#{subject}> .\n"
+        f"  ?s {rendered} ?a .\n"
+        f"}}"
+    )
 
 
 def run(onto, kg=None, graph=None, base: str = "") -> list[CQResult]:
@@ -178,16 +185,15 @@ def run(onto, kg=None, graph=None, base: str = "") -> list[CQResult]:
         subject = cq.subject_class(onto.properties)
         q = sparql_for(cq, onto, base)
         if not q:
-            out.append(CQResult(cq.id, cq.template, False,
-                                "no relation, chain or sparql declared"))
+            out.append(CQResult(cq.id, cq.template, False, "no relation, chain or sparql declared"))
             continue
-        subj_q = (f"SELECT ?s WHERE "
-                  f"{{ ?s a/rdfs:subClassOf* <{base}#{subject}> }}")
+        subj_q = f"SELECT ?s WHERE {{ ?s a/rdfs:subClassOf* <{base}#{subject}> }}"
         subjects = {r[0] for r in graph.query(subj_q)}
         pairs = {(r[0], r[1]) for r in graph.query(q)}
         answered = {s for s, _ in pairs} & subjects
-        out.append(CQResult(cq.id, cq.template, True, "",
-                            len(subjects), len(answered), len(pairs), q))
+        out.append(
+            CQResult(cq.id, cq.template, True, "", len(subjects), len(answered), len(pairs), q)
+        )
     return out
 
 
@@ -195,23 +201,29 @@ def report(results: list[CQResult]) -> str:
     """A text block fit to paste into a paper's evaluation section."""
     if not results:
         return "no competency questions declared"
-    lines = [f"{'CQ':5} {'supported':10} {'subjects':>9} {'answered':>9} "
-             f"{'coverage':>9}  question"]
+    lines = [
+        (f"{'CQ':5} {'supported':10} {'subjects':>9} {'answered':>9} {'coverage':>9}  question")
+    ]
     for r in results:
         lines.append(
             f"{r.id:5} {'yes' if r.supported else 'NO':10} "
             f"{r.n_subjects:>9} {r.n_answered:>9} {r.coverage:>8.1%}  "
-            f"{r.template}")
+            f"{r.template}"
+        )
         if not r.supported:
             lines.append(f"{'':5} unsupported: {r.reason}")
     sup = [r for r in results if r.supported]
     lines.append("")
-    lines.append(f"schema pass rate:   {len(sup)}/{len(results)} "
-                 f"({len(sup) / len(results):.0%}) of declared questions the "
-                 f"ontology can express")
+    lines.append(
+        f"schema pass rate:   {len(sup)}/{len(results)} "
+        f"({len(sup) / len(results):.0%}) of declared questions the "
+        f"ontology can express"
+    )
     if sup:
         mean = sum(r.coverage for r in sup) / len(sup)
         full = sum(1 for r in sup if r.coverage >= 1.0)
-        lines.append(f"instance coverage:  {mean:.1%} mean over supported "
-                     f"questions; {full}/{len(sup)} answered for every subject")
+        lines.append(
+            f"instance coverage:  {mean:.1%} mean over supported "
+            f"questions; {full}/{len(sup)} answered for every subject"
+        )
     return "\n".join(lines)

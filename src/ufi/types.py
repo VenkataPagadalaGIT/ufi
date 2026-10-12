@@ -4,10 +4,11 @@ Every object that reaches a score carries provenance. A triple without a source
 document and a retrieval date cannot enter the graph; this is enforced in
 `KnowledgeGraph.add_triple`, not left to convention.
 """
+
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import date
 from enum import Enum
 from typing import Any
@@ -22,9 +23,9 @@ class SourceClass(str, Enum):
     which is the failure the design exists to avoid.
     """
 
-    STRUCTURE = "structure"      # encyclopedic, registry, standards bodies
-    COVERAGE = "coverage"        # the organization's own site, competitor sites
-    DEMAND = "demand"            # anywhere users put questions in their own words
+    STRUCTURE = "structure"  # encyclopedic, registry, standards bodies
+    COVERAGE = "coverage"  # the organization's own site, competitor sites
+    DEMAND = "demand"  # anywhere users put questions in their own words
     ANSWERABILITY = "answerability"  # retrieved results judged for whether they answer
 
 
@@ -35,10 +36,10 @@ class Provenance:
     source_id: str
     source_class: SourceClass
     retrieved: date
-    locator: str = ""            # URL, file path, row id, API call
+    locator: str = ""  # URL, file path, row id, API call
     licence: str = ""
     note: str = ""
-    synthetic: bool = False      # generated for demonstration, not observed
+    synthetic: bool = False  # generated for demonstration, not observed
 
     def __post_init__(self) -> None:
         if self.locator and self.source_id and self.locator == self.source_id:
@@ -47,7 +48,8 @@ class Provenance:
             # cheaper than discovering it in an audit.
             raise ValueError(
                 f"provenance locator {self.locator!r} is identical to source_id; "
-                "give the row, URL or call that produced this statement")
+                "give the row, URL or call that produced this statement"
+            )
 
     def key(self) -> str:
         return f"{self.source_id}:{self.locator}:{self.retrieved.isoformat()}"
@@ -94,16 +96,16 @@ class CompetencyQuestion:
     """
 
     id: str
-    template: str                 # "what time zone is area code {e}"
-    relation: str = ""            # empty when the question uses `chain`
+    template: str  # "what time zone is area code {e}"
+    relation: str = ""  # empty when the question uses `chain`
     pattern: str = "lookup"
     verbalizations: tuple[str, ...] = ()
     sparql: str = ""
-    source: str = ""              # which demand source the phrasing came from
-    asks_about: str = ""          # the class the question is asked OF
-    chain: tuple[str, ...] = ()   # property path; "^p" traverses p backwards
-    unsupported: str = ""         # why the ontology cannot express this at all
-    answer_class: str = ""        # the class of thing the question asks FOR
+    source: str = ""  # which demand source the phrasing came from
+    asks_about: str = ""  # the class the question is asked OF
+    chain: tuple[str, ...] = ()  # property path; "^p" traverses p backwards
+    unsupported: str = ""  # why the ontology cannot express this at all
+    answer_class: str = ""  # the class of thing the question asks FOR
 
     def subject_class(self, properties: dict) -> str:
         """Which class this question is asked about.
@@ -155,10 +157,10 @@ class Judgment:
     judge_id: str = ""
     model: str = ""
     judged: date | None = None
-    subject: str = ""            # the entity being judged
-    question: str = ""           # the verbalization or coverage prompt
-    rubric_id: str = ""          # which rubric produced this grade
-    evidence_digest: str = ""    # hash of the evidence the judge saw
+    subject: str = ""  # the entity being judged
+    question: str = ""  # the verbalization or coverage prompt
+    rubric_id: str = ""  # which rubric produced this grade
+    evidence_digest: str = ""  # hash of the evidence the judge saw
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)

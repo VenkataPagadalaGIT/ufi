@@ -7,24 +7,36 @@ comparison, the demand coverage report and the run manifest. Everything a paper
 reports about a scoring run comes out of `run()`, so the paper's tables are
 generated rather than transcribed.
 """
+
 from __future__ import annotations
 
 import csv
 import json
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Mapping, Sequence
 
 from . import __version__
-from .baselines import BaselineResult, compare_rankings
 from .demand import DemandIndex
 from .graph import KnowledgeGraph
-from .judge import CachedJudge, JudgmentCache, Judge, RUBRIC_ANSWERABILITY, RUBRIC_COVERAGE
+from .judge import (
+    RUBRIC_ANSWERABILITY,
+    RUBRIC_COVERAGE,
+    CachedJudge,
+    Judge,
+    JudgmentCache,
+)
 from .ontology import Ontology
 from .provenance import RunManifest
-from .score import (EntityScore, Parameters, aggregate_to_class, demand,
-                    relatedness, schema_gap_by_relation, score_entities)
-from .types import Grade, stable_hash
+from .score import (
+    Parameters,
+    aggregate_to_class,
+    demand,
+    relatedness,
+    schema_gap_by_relation,
+    score_entities,
+)
+from .types import stable_hash
 
 
 @dataclass
@@ -53,13 +65,13 @@ class GapRun:
         problems = self.ontology.validate(strict=True)
 
         cls = self.target_class
-        entities = (self.graph.instances(cls, self.ontology) if cls
-                    else list(self.graph.entities))
+        entities = self.graph.instances(cls, self.ontology) if cls else list(self.graph.entities)
         if not entities:
             raise ValueError(
                 f"no instances of {cls!r} in the graph. The score is defined over "
                 "instances; a class with none cannot be scored, and a class-level "
-                "mean over an empty instance set is not a number.")
+                "mean over an empty instance set is not a number."
+            )
 
         core = []
         for c in self.ontology.core_classes:
@@ -81,14 +93,19 @@ class GapRun:
         for e in entities:
             label = self.graph.entities[e].label or e
             if judge:
-                j = judge.grade(f"own coverage of {label}",
-                                self.own_evidence(e), RUBRIC_COVERAGE)
+                j = judge.grade(f"own coverage of {label}", self.own_evidence(e), RUBRIC_COVERAGE)
                 own[e] = float(j.grade)
                 if self.competitors:
-                    gs = [float(judge.grade(f"coverage of {label} by {k}",
-                                            self.competitor_evidence(e, k),
-                                            RUBRIC_COVERAGE).grade)
-                          for k in self.competitors]
+                    gs = [
+                        float(
+                            judge.grade(
+                                f"coverage of {label} by {k}",
+                                self.competitor_evidence(e, k),
+                                RUBRIC_COVERAGE,
+                            ).grade
+                        )
+                        for k in self.competitors
+                    ]
                     cov[e] = sum(gs) / len(gs)
                 else:
                     cov[e] = 0.0
@@ -100,16 +117,19 @@ class GapRun:
             # score of zero. Scoring it would charge every entity for a
             # question no page could answer from this model, and the gap is
             # already reported by cq.run() where it means something.
-            qs = [q for q in
-                  self.ontology.questions_for_class(self.graph.entities[e].cls)
-                  if not q.unsupported]
+            qs = [
+                q
+                for q in self.ontology.questions_for_class(self.graph.entities[e].cls)
+                if not q.unsupported
+            ]
             per_q: dict[str, float] = {}
             for q in qs:
                 if judge:
                     best = 0.0
                     for v in q.verbalize(label):
-                        g = float(judge.grade(v, self.serp_evidence(e, v),
-                                              RUBRIC_ANSWERABILITY).grade)
+                        g = float(
+                            judge.grade(v, self.serp_evidence(e, v), RUBRIC_ANSWERABILITY).grade
+                        )
                         best = max(best, g)
                     per_q[q.id] = best
                 else:
@@ -125,11 +145,18 @@ class GapRun:
             cache.save()
 
         scores = score_entities(entities, rel, dem, own, cov, ans, self.params)
-        ents_by_rel = {r: [e for e in entities
-                           if r in {q.relation for q in
-                                    self.ontology.questions_for_class(
-                                        self.graph.entities[e].cls)}]
-                       for r in {q.relation for q in self.ontology.questions}}
+        ents_by_rel = {
+            r: [
+                e
+                for e in entities
+                if r
+                in {
+                    q.relation
+                    for q in self.ontology.questions_for_class(self.graph.entities[e].cls)
+                }
+            ]
+            for r in {q.relation for q in self.ontology.questions}
+        }
         sg = schema_gap_by_relation(ents_by_rel, rel, dem, own, ans_by_rel, self.params)
         class_of = {e: self.graph.entities[e].cls for e in entities}
         classes = aggregate_to_class(scores, class_of)
@@ -137,36 +164,43 @@ class GapRun:
         manifest = RunManifest(
             package_version=__version__,
             ontology_fingerprint=self.ontology.fingerprint(),
-            graph_fingerprint=stable_hash(sorted(self.graph.entities),
-                                          len(self.graph.triples)),
+            graph_fingerprint=stable_hash(sorted(self.graph.entities), len(self.graph.triples)),
             cache_fingerprint=cache.fingerprint(),
             frozen_queries_hash=_frozen_hash(self.frozen_queries_path),
             parameters_hash=stable_hash(sorted(self.params.__dict__.items())),
-            n_entities=len(entities), n_triples=len(self.graph.triples),
+            n_entities=len(entities),
+            n_triples=len(self.graph.triples),
             n_judgments=len(cache),
             judge_calls=judge.calls if judge else 0,
             cache_hits=judge.hits if judge else 0,
             demand_first_party_share=self.demand_index.first_party_share(),
             demand_synthetic_share=self.demand_index.synthetic_share(),
-            notes={"ontology_warnings": problems,
-                   "target_class": cls,
-                   "core_instances": len(core)},
+            notes={"ontology_warnings": problems, "target_class": cls, "core_instances": len(core)},
         )
         manifest.write(out / "manifest.json")
 
         _write_csv(out / "scores.csv", [s.as_row() for s in scores])
         _write_csv(out / "classes.csv", classes)
-        _write_csv(out / "schema_gaps.csv",
-                   [{"relation": r, "SG": round(v, 6)} for r, v in
-                    sorted(sg.items(), key=lambda kv: -kv[1])])
+        _write_csv(
+            out / "schema_gaps.csv",
+            [
+                {"relation": r, "SG": round(v, 6)}
+                for r, v in sorted(sg.items(), key=lambda kv: -kv[1])
+            ],
+        )
         _write_csv(out / "demand_coverage.csv", self.demand_index.coverage_report())
         (out / "graph_sources.json").write_text(
-            json.dumps(self.graph.source_report(), indent=1, default=str),
-            encoding="utf-8")
+            json.dumps(self.graph.source_report(), indent=1, default=str), encoding="utf-8"
+        )
 
-        return {"scores": scores, "classes": classes, "schema_gaps": sg,
-                "manifest": manifest, "ontology_warnings": problems,
-                "demand_coverage": self.demand_index.coverage_report()}
+        return {
+            "scores": scores,
+            "classes": classes,
+            "schema_gaps": sg,
+            "manifest": manifest,
+            "ontology_warnings": problems,
+            "demand_coverage": self.demand_index.coverage_report(),
+        }
 
 
 def _frozen_hash(path: str | Path | None) -> str:
@@ -180,6 +214,7 @@ def _frozen_hash(path: str | Path | None) -> str:
     if path is None:
         return "none:query-set-not-frozen"
     from .provenance import verify_frozen
+
     try:
         info = verify_frozen(path)
     except FileNotFoundError:

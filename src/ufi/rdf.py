@@ -12,6 +12,7 @@ clean one. `validate()` refuses to report success when it had nothing to check.
 rdflib and pyshacl are optional dependencies; import this module only when the
 RDF path is wanted, and install with `pip install "ufi[rdf]"`.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -26,8 +27,9 @@ try:
     from rdflib import BNode, Graph, Literal, Namespace, URIRef
     from rdflib.collection import Collection
     from rdflib.namespace import DCTERMS, OWL, RDF, RDFS, SKOS, XSD
+
     _HAVE_RDFLIB = True
-except ImportError:                                   # pragma: no cover
+except ImportError:  # pragma: no cover
     _HAVE_RDFLIB = False
 
 SCHEMA = "http://schema.org/"
@@ -36,32 +38,34 @@ SCHEMA = "http://schema.org/"
 def _require() -> None:
     if not _HAVE_RDFLIB:
         raise ImportError(
-            "RDF export needs rdflib and pyshacl. Install with: "
-            'pip install "ufi[rdf]"')
+            'RDF export needs rdflib and pyshacl. Install with: pip install "ufi[rdf]"'
+        )
 
 
 def _safe(ident: str) -> str:
     import re
+
     return re.sub(r"[^A-Za-z0-9_.-]", "_", ident)
 
 
-def to_rdf(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
-           base: str | None = None) -> "Graph":
+def to_rdf(onto: Ontology, kg: KnowledgeGraph | None = None, base: str | None = None) -> Graph:
     """Build an RDF graph of the ontology, and of the instances when given."""
     _require()
     base = base or default_base(onto.name)
     NS = Namespace(base + "#")
     g = Graph()
     g.bind("", NS)
-    g.bind("owl", OWL); g.bind("rdfs", RDFS); g.bind("skos", SKOS)
-    g.bind("dcterms", DCTERMS); g.bind("schema", Namespace(SCHEMA))
+    g.bind("owl", OWL)
+    g.bind("rdfs", RDFS)
+    g.bind("skos", SKOS)
+    g.bind("dcterms", DCTERMS)
+    g.bind("schema", Namespace(SCHEMA))
 
     onto_iri = URIRef(base)
     g.add((onto_iri, RDF.type, OWL.Ontology))
     g.add((onto_iri, OWL.versionIRI, URIRef(f"{base}/{onto.version}")))
     g.add((onto_iri, RDFS.label, Literal(f"{onto.name} {onto.version}")))
-    g.add((onto_iri, DCTERMS.license,
-           URIRef("http://creativecommons.org/licenses/by/4.0/")))
+    g.add((onto_iri, DCTERMS.license, URIRef("http://creativecommons.org/licenses/by/4.0/")))
 
     def term(name: str) -> URIRef:
         if name.startswith("ext:"):
@@ -122,10 +126,12 @@ def to_rdf(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
         if p.functional:
             g.add((prop, RDF.type, OWL.FunctionalProperty))
         if not is_data:
-            for flag, cls_ in (("symmetric", OWL.SymmetricProperty),
-                               ("asymmetric", OWL.AsymmetricProperty),
-                               ("irreflexive", OWL.IrreflexiveProperty),
-                               ("transitive", OWL.TransitiveProperty)):
+            for flag, cls_ in (
+                ("symmetric", OWL.SymmetricProperty),
+                ("asymmetric", OWL.AsymmetricProperty),
+                ("irreflexive", OWL.IrreflexiveProperty),
+                ("transitive", OWL.TransitiveProperty),
+            ):
                 if getattr(p, flag, False):
                     g.add((prop, RDF.type, cls_))
             if p.inverse_of:
@@ -136,8 +142,13 @@ def to_rdf(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
             restr = BNode()
             g.add((restr, RDF.type, OWL.Restriction))
             g.add((restr, OWL.onProperty, prop))
-            g.add((restr, OWL.minCardinality,
-                   Literal(p.min_cardinality, datatype=XSD.nonNegativeInteger)))
+            g.add(
+                (
+                    restr,
+                    OWL.minCardinality,
+                    Literal(p.min_cardinality, datatype=XSD.nonNegativeInteger),
+                )
+            )
             g.add((term(p.domain), RDFS.subClassOf, restr))
         for pred, target in p.align.items():
             g.add((prop, _pred(pred), URIRef(target)))
@@ -159,7 +170,7 @@ def to_rdf(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
                 continue
             subj = NS[_safe(t.subject)]
             if spec.kind == "data" or t.object.startswith("lit:"):
-                val = t.object[4:] if t.object.startswith("lit:") else t.object
+                val = t.object.removeprefix("lit:")
                 g.add((subj, NS[t.predicate], Literal(val)))
             else:
                 g.add((subj, NS[t.predicate], NS[_safe(t.object)]))
@@ -176,16 +187,19 @@ def to_rdf(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
     return g
 
 
-def _pred(name: str) -> "URIRef":
-    table = {"skos:exactMatch": SKOS.exactMatch, "skos:closeMatch": SKOS.closeMatch,
-             "skos:broadMatch": SKOS.broadMatch, "rdfs:subPropertyOf": RDFS.subPropertyOf,
-             "owl:equivalentProperty": OWL.equivalentProperty,
-             "owl:equivalentClass": OWL.equivalentClass}
+def _pred(name: str) -> URIRef:
+    table = {
+        "skos:exactMatch": SKOS.exactMatch,
+        "skos:closeMatch": SKOS.closeMatch,
+        "skos:broadMatch": SKOS.broadMatch,
+        "rdfs:subPropertyOf": RDFS.subPropertyOf,
+        "owl:equivalentProperty": OWL.equivalentProperty,
+        "owl:equivalentClass": OWL.equivalentClass,
+    }
     return table.get(name, RDFS.seeAlso)
 
 
-def validate(onto: "Ontology", kg: "KnowledgeGraph", shapes_ttl: str | None = None
-             ) -> dict[str, Any]:
+def validate(onto: Ontology, kg: KnowledgeGraph, shapes_ttl: str | None = None) -> dict[str, Any]:
     """Run SHACL over the populated graph and report focus nodes and violations.
 
     Refuses to call a run clean when it had nothing to check: a validation over
@@ -194,30 +208,41 @@ def validate(onto: "Ontology", kg: "KnowledgeGraph", shapes_ttl: str | None = No
     """
     _require()
     import pyshacl
+
     data = to_rdf(onto, kg)
     shapes = Graph().parse(data=shapes_ttl or onto.to_shacl(), format="turtle")
     conforms, results_graph, text = pyshacl.validate(
-        data, shacl_graph=shapes, inference="none", abort_on_first=False,
-        meta_shacl=False, advanced=False)
-    targets = set()
-    for s, _, o in shapes.triples((None, URIRef(
-            "http://www.w3.org/ns/shacl#targetClass"), None)):
+        data,
+        shacl_graph=shapes,
+        inference="none",
+        abort_on_first=False,
+        meta_shacl=False,
+        advanced=False,
+    )
+    targets: set[str] = set()
+    for _s, _, o in shapes.triples((None, URIRef("http://www.w3.org/ns/shacl#targetClass"), None)):
         targets.update(x for x in data.subjects(RDF.type, o))
-    n_violations = len(list(results_graph.subjects(
-        RDF.type, URIRef("http://www.w3.org/ns/shacl#ValidationResult"))))
+    n_violations = len(
+        list(
+            results_graph.subjects(RDF.type, URIRef("http://www.w3.org/ns/shacl#ValidationResult"))
+        )
+    )
     return {
         "conforms": bool(conforms) and len(targets) > 0,
         "focus_nodes": len(targets),
         "violations": n_violations,
         "vacuous": len(targets) == 0,
         "report": text,
-        "note": ("no focus nodes: the shapes target classes with no instances, "
-                 "so this run checked nothing") if not targets else "",
+        "note": (
+            "no focus nodes: the shapes target classes with no instances, "
+            "so this run checked nothing"
+        )
+        if not targets
+        else "",
     }
 
 
-def reason(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
-           timeout: int = 120) -> dict[str, Any]:
+def reason(onto: Ontology, kg: KnowledgeGraph | None = None, timeout: int = 120) -> dict[str, Any]:
     """Run HermiT over the ontology and report consistency and inferences.
 
     Reports the number of inferred class assertions that were not asserted, so
@@ -226,7 +251,9 @@ def reason(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
     run is vacuous however green it looks.
     """
     _require()
-    import tempfile, os
+    import os
+    import tempfile
+
     import owlready2
 
     g = to_rdf(onto, kg)
@@ -238,22 +265,31 @@ def reason(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
         g.serialize(destination=path, format="ntriples")
         world = owlready2.World()
         loaded = world.get_ontology("file://" + path).load()
-        asserted = {(str(i.iri), str(c.iri))
-                    for i in loaded.individuals() for c in i.is_a
-                    if hasattr(c, "iri")}
+        asserted = {
+            (str(i.iri), str(c.iri))
+            for i in loaded.individuals()
+            for c in i.is_a
+            if hasattr(c, "iri")
+        }
         try:
             with loaded:
-                owlready2.sync_reasoner(world, infer_property_values=False,
-                                        debug=0)
+                owlready2.sync_reasoner(world, infer_property_values=False, debug=0)
             consistent = True
             error = ""
         except owlready2.OwlReadyInconsistentOntologyError as exc:
-            return {"consistent": False, "inferred_class_assertions": 0,
-                    "vacuous": False, "error": str(exc)[:400],
-                    "reasoner": "HermiT (owlready2)"}
-        after = {(str(i.iri), str(c.iri))
-                 for i in loaded.individuals() for c in i.is_a
-                 if hasattr(c, "iri")}
+            return {
+                "consistent": False,
+                "inferred_class_assertions": 0,
+                "vacuous": False,
+                "error": str(exc)[:400],
+                "reasoner": "HermiT (owlready2)",
+            }
+        after = {
+            (str(i.iri), str(c.iri))
+            for i in loaded.individuals()
+            for c in i.is_a
+            if hasattr(c, "iri")
+        }
         new = sorted(after - asserted)
         return {
             "consistent": consistent,
@@ -263,14 +299,17 @@ def reason(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
             "individuals": len(list(loaded.individuals())),
             "reasoner": "HermiT (owlready2)",
             "error": error,
-            "note": ("no new class assertions were inferred: the ontology has no "
-                     "defined classes, so a reasoner run proves only that nothing "
-                     "contradicts anything") if not new else "",
+            "note": (
+                "no new class assertions were inferred: the ontology has no "
+                "defined classes, so a reasoner run proves only that nothing "
+                "contradicts anything"
+            )
+            if not new
+            else "",
         }
 
 
-def materialize(onto: "Ontology", kg: "KnowledgeGraph", timeout: int = 120
-                ) -> dict[str, Any]:
+def materialize(onto: Ontology, kg: KnowledgeGraph, timeout: int = 120) -> dict[str, Any]:
     """Classify the graph with a reasoner and write inferred types back.
 
     This is what makes the ontology load-bearing rather than decorative. The
@@ -281,8 +320,11 @@ def materialize(onto: "Ontology", kg: "KnowledgeGraph", timeout: int = 120
     tell is to put the classification here instead of in the loader.
     """
     _require()
-    import tempfile, os
+    import os
+    import tempfile
+
     import owlready2
+
     from .types import Entity
 
     g = to_rdf(onto, kg)
@@ -291,9 +333,10 @@ def materialize(onto: "Ontology", kg: "KnowledgeGraph", timeout: int = 120
         g.serialize(destination=path, format="ntriples")
         world = owlready2.World()
         loaded = world.get_ontology("file://" + path).load()
-        before = {str(i.iri): {str(c.iri).split("#")[-1] for c in i.is_a
-                               if hasattr(c, "iri")}
-                  for i in loaded.individuals()}
+        before = {
+            str(i.iri): {str(c.iri).split("#")[-1] for c in i.is_a if hasattr(c, "iri")}
+            for i in loaded.individuals()
+        }
         try:
             with loaded:
                 owlready2.sync_reasoner(world, infer_property_values=False, debug=0)
@@ -311,13 +354,21 @@ def materialize(onto: "Ontology", kg: "KnowledgeGraph", timeout: int = 120
                     if _safe(eid) == local:
                         if onto.is_a(cls_name, ent.cls) and cls_name != ent.cls:
                             kg.entities[eid] = Entity(
-                                id=ent.id, cls=cls_name, label=ent.label,
-                                aliases=ent.aliases, external_ids=ent.external_ids)
+                                id=ent.id,
+                                cls=cls_name,
+                                label=ent.label,
+                                aliases=ent.aliases,
+                                external_ids=ent.external_ids,
+                            )
                             kg._by_class.setdefault(cls_name, []).append(eid)
                             if eid in kg._by_class.get(ent.cls, []):
                                 kg._by_class[ent.cls].remove(eid)
                             changed.append((eid, cls_name))
                         break
-        return {"consistent": True, "reclassified": len(changed),
-                "examples": changed[:5], "error": "",
-                "reasoner": "HermiT (owlready2)"}
+        return {
+            "consistent": True,
+            "reclassified": len(changed),
+            "examples": changed[:5],
+            "error": "",
+            "reasoner": "HermiT (owlready2)",
+        }

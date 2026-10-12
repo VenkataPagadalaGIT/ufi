@@ -8,16 +8,17 @@ is the specific error that makes a gap-finding score penalize gaps: an entity
 that competitors cover well acquires more triples, more centrality, and a higher
 prior, so the score ranks covered entities above uncovered ones.
 """
+
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Iterable, Iterator
 
 import networkx as nx
 
-from .types import Entity, Provenance, SourceClass, Triple
+from .types import Entity, SourceClass, Triple
 
 
 class ProvenanceError(ValueError):
@@ -37,7 +38,8 @@ class KnowledgeGraph:
         if existing:
             if existing.cls != entity.cls:
                 raise ValueError(
-                    f"entity {entity.id} already typed {existing.cls}, not {entity.cls}")
+                    f"entity {entity.id} already typed {existing.cls}, not {entity.cls}"
+                )
             return existing
         self.entities[entity.id] = entity
         self._by_class[entity.cls].append(entity.id)
@@ -50,7 +52,8 @@ class KnowledgeGraph:
                 f"triple {triple.subject} {triple.predicate} {triple.object} has no "
                 "source_id or retrieval date. Every statement in the graph carries "
                 "provenance; this is checked here so that a later audit of where a "
-                "published fact came from cannot come up empty.")
+                "published fact came from cannot come up empty."
+            )
         self.triples.append(triple)
         self._by_subject[triple.subject].append(triple)
 
@@ -108,11 +111,19 @@ class KnowledgeGraph:
         for t in self.triples:
             p = t.provenance
             k = (p.source_id, p.source_class.value)
-            row = agg.setdefault(k, {
-                "source_id": p.source_id, "source_class": p.source_class.value,
-                "triples": 0, "subjects": set(), "predicates": set(),
-                "first_retrieved": p.retrieved, "last_retrieved": p.retrieved,
-                "licence": p.licence})
+            row = agg.setdefault(
+                k,
+                {
+                    "source_id": p.source_id,
+                    "source_class": p.source_class.value,
+                    "triples": 0,
+                    "subjects": set(),
+                    "predicates": set(),
+                    "first_retrieved": p.retrieved,
+                    "last_retrieved": p.retrieved,
+                    "licence": p.licence,
+                },
+            )
             row["triples"] += 1
             row["subjects"].add(t.subject)
             row["predicates"].add(t.predicate)

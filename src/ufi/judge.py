@@ -13,15 +13,16 @@ built into this module rather than left to the deployment:
    reliability statistic the reader will ask for is produced by the same tool
    that produced the grades.
 """
+
 from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
 from collections import Counter
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
-from typing import Callable, Iterable, Sequence
 
 from .types import Grade, Judgment, stable_hash
 
@@ -52,8 +53,7 @@ class Judge(ABC):
     model: str = ""
 
     @abstractmethod
-    def grade(self, key: str, prompt: str, evidence: str, rubric: str) -> Judgment:
-        ...
+    def grade(self, key: str, prompt: str, evidence: str, rubric: str) -> Judgment: ...
 
 
 class CallableJudge(Judge):
@@ -63,8 +63,7 @@ class CallableJudge(Judge):
     a deployment supplies one, and the cache below makes the call happen once.
     """
 
-    def __init__(self, fn: Callable[[str, str, str], float], judge_id: str,
-                 model: str = ""):
+    def __init__(self, fn: Callable[[str, str, str], float], judge_id: str, model: str = ""):
         self.fn = fn
         self.judge_id = judge_id
         self.model = model
@@ -72,8 +71,9 @@ class CallableJudge(Judge):
     def grade(self, key: str, prompt: str, evidence: str, rubric: str) -> Judgment:
         raw = self.fn(prompt, evidence, rubric)
         g = raw if isinstance(raw, Grade) else _nearest_grade(float(raw))
-        return Judgment(key=key, grade=g, judge_id=self.judge_id,
-                        model=self.model, judged=date.today())
+        return Judgment(
+            key=key, grade=g, judge_id=self.judge_id, model=self.model, judged=date.today()
+        )
 
 
 class RuleJudge(Judge):
@@ -87,8 +87,9 @@ class RuleJudge(Judge):
 
     judge_id = "rule"
 
-    def __init__(self, expectations: dict[str, Sequence[str]] | None = None,
-                 specific_min_words: int = 4):
+    def __init__(
+        self, expectations: dict[str, Sequence[str]] | None = None, specific_min_words: int = 4
+    ):
         self.expectations = expectations or {}
         self.specific_min_words = specific_min_words
 
@@ -100,11 +101,9 @@ class RuleJudge(Judge):
         low = ev.lower()
         if want:
             if all(w in low for w in want):
-                return Judgment(key, Grade.FULL, "all required tokens present",
-                                self.judge_id)
+                return Judgment(key, Grade.FULL, "all required tokens present", self.judge_id)
             if any(w in low for w in want):
-                return Judgment(key, Grade.PARTIAL, "some required tokens present",
-                                self.judge_id)
+                return Judgment(key, Grade.PARTIAL, "some required tokens present", self.judge_id)
             return Judgment(key, Grade.NONE, "no required token present", self.judge_id)
         # No expectation registered: grade on specificity. Evidence that names a
         # concrete value (a number, or a phrase of several words) counts as a
@@ -115,8 +114,7 @@ class RuleJudge(Judge):
         if words >= self.specific_min_words and has_value:
             return Judgment(key, Grade.FULL, "specific, names a value", self.judge_id)
         if words >= self.specific_min_words or has_value:
-            return Judgment(key, Grade.PARTIAL, "present but not specific",
-                            self.judge_id)
+            return Judgment(key, Grade.PARTIAL, "present but not specific", self.judge_id)
         return Judgment(key, Grade.NONE, "bare mention", self.judge_id)
 
 
@@ -145,18 +143,21 @@ class JudgmentCache:
         row = self._data.get(key)
         if not row:
             return None
-        return Judgment(key=key, grade=_nearest_grade(row["grade"]),
-                        rationale=row.get("rationale", ""),
-                        judge_id=row.get("judge_id", ""), model=row.get("model", ""),
-                        judged=date.fromisoformat(row["judged"]) if row.get("judged") else None)
+        return Judgment(
+            key=key,
+            grade=_nearest_grade(row["grade"]),
+            rationale=row.get("rationale", ""),
+            judge_id=row.get("judge_id", ""),
+            model=row.get("model", ""),
+            judged=date.fromisoformat(row["judged"]) if row.get("judged") else None,
+        )
 
     def put(self, j: Judgment) -> None:
         self._data[j.key] = j.to_dict()
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps(self._data, indent=1, sort_keys=True),
-                             encoding="utf-8")
+        self.path.write_text(json.dumps(self._data, indent=1, sort_keys=True), encoding="utf-8")
 
     def __len__(self) -> int:
         return len(self._data)
@@ -171,13 +172,13 @@ class JudgmentCache:
         not exist. The full cache file is the audit record; this is the
         reproducibility check.
         """
-        return stable_hash(sorted((k, round(float(v["grade"]), 6))
-                                  for k, v in self._data.items()))
+        return stable_hash(sorted((k, round(float(v["grade"]), 6)) for k, v in self._data.items()))
 
     def audit_fingerprint(self) -> str:
         """Digest of the complete cache, including rationales and timestamps."""
-        return stable_hash(sorted((k, tuple(sorted(v.items(), key=str)))
-                                  for k, v in self._data.items()))
+        return stable_hash(
+            sorted((k, tuple(sorted(v.items(), key=str))) for k, v in self._data.items())
+        )
 
 
 @dataclass
@@ -195,24 +196,30 @@ class CachedJudge:
     calls: int = 0
     hits: int = 0
 
-    def grade(self, prompt: str, evidence: str, rubric: str,
-              subject: str = "", rubric_id: str = "") -> Judgment:
+    def grade(
+        self, prompt: str, evidence: str, rubric: str, subject: str = "", rubric_id: str = ""
+    ) -> Judgment:
         k = self.cache.key(rubric, prompt, evidence)
         hit = self.cache.get(k)
         if hit is not None:
             self.hits += 1
             return hit
         j = self.inner.grade(k, prompt, evidence, rubric)
-        j = replace(j, subject=subject, question=prompt,
-                    rubric_id=rubric_id or stable_hash(rubric)[:8],
-                    evidence_digest=stable_hash(evidence))
+        j = replace(
+            j,
+            subject=subject,
+            question=prompt,
+            rubric_id=rubric_id or stable_hash(rubric)[:8],
+            evidence_digest=stable_hash(evidence),
+        )
         self.cache.put(j)
         self.calls += 1
         return j
 
 
-def agreement(cache_a: "JudgmentCache", cache_b: "JudgmentCache",
-              levels: Sequence[float] = (0.0, 0.5, 1.0)) -> dict:
+def agreement(
+    cache_a: JudgmentCache, cache_b: JudgmentCache, levels: Sequence[float] = (0.0, 0.5, 1.0)
+) -> dict:
     """Compare two graders over the items they both judged.
 
     Takes two caches rather than two lists so that the comparison is made on
@@ -222,22 +229,32 @@ def agreement(cache_a: "JudgmentCache", cache_b: "JudgmentCache",
     """
     shared = sorted(set(cache_a._data) & set(cache_b._data))
     if not shared:
-        return {"n": 0, "kappa": float("nan"), "exact_agreement": float("nan"),
-                "note": "the two caches have no judgments in common"}
+        return {
+            "n": 0,
+            "kappa": float("nan"),
+            "exact_agreement": float("nan"),
+            "note": "the two caches have no judgments in common",
+        }
     a = [float(cache_a._data[k]["grade"]) for k in shared]
     b = [float(cache_b._data[k]["grade"]) for k in shared]
     k = weighted_kappa(a, b, levels)
-    exact = sum(1 for x, y in zip(a, b) if x == y) / len(shared)
-    point, lo, hi = bootstrap_ci(
-        [1.0 if x == y else 0.0 for x, y in zip(a, b)])
-    return {"n": len(shared), "kappa": k, "exact_agreement": exact,
-            "exact_agreement_ci": (lo, hi),
-            "only_in_a": len(set(cache_a._data) - set(cache_b._data)),
-            "only_in_b": len(set(cache_b._data) - set(cache_a._data))}
+    exact = sum(1 for x, y in zip(a, b, strict=True) if x == y) / len(shared)
+    _point, lo, hi = bootstrap_ci([1.0 if x == y else 0.0 for x, y in zip(a, b, strict=True)])
+    return {
+        "n": len(shared),
+        "kappa": k,
+        "exact_agreement": exact,
+        "exact_agreement_ci": (lo, hi),
+        "only_in_a": len(set(cache_a._data) - set(cache_b._data)),
+        "only_in_b": len(set(cache_b._data) - set(cache_a._data)),
+    }
 
 
-def weighted_kappa(a: Sequence[Grade | float], b: Sequence[Grade | float],
-                   levels: Sequence[float] = (0.0, 0.5, 1.0)) -> float:
+def weighted_kappa(
+    a: Sequence[Grade | float],
+    b: Sequence[Grade | float],
+    levels: Sequence[float] = (0.0, 0.5, 1.0),
+) -> float:
     """Linear-weighted Cohen's kappa between two graders.
 
     Linear rather than quadratic because the rubric is ordinal with three
@@ -252,7 +269,7 @@ def weighted_kappa(a: Sequence[Grade | float], b: Sequence[Grade | float],
     idx = {v: i for i, v in enumerate(levels)}
     n = len(a)
     obs = [[0.0] * k for _ in range(k)]
-    for x, y in zip(a, b):
+    for x, y in zip(a, b, strict=True):
         obs[idx[x]][idx[y]] += 1.0 / n
     ra = Counter(idx[x] for x in a)
     rb = Counter(idx[y] for y in b)
@@ -264,11 +281,16 @@ def weighted_kappa(a: Sequence[Grade | float], b: Sequence[Grade | float],
     return 1.0 - num / den
 
 
-def bootstrap_ci(values: Sequence[float], stat=lambda v: sum(v) / len(v),
-                 n_boot: int = 2000, alpha: float = 0.05, seed: int = 0
-                 ) -> tuple[float, float, float]:
+def bootstrap_ci(
+    values: Sequence[float],
+    stat=lambda v: sum(v) / len(v),
+    n_boot: int = 2000,
+    alpha: float = 0.05,
+    seed: int = 0,
+) -> tuple[float, float, float]:
     """Point estimate and percentile bootstrap interval."""
     import random
+
     rng = random.Random(seed)
     vals = list(values)
     if not vals:
