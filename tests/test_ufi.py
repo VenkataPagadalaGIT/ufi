@@ -523,7 +523,8 @@ def test_generated_sparql_renders_a_property_path():
     b = "http://example.org/nanp"
     expected = (f"^<{b}#withinAreaCode>/<{b}#assignedTo>/<{b}#isRoleOf>")
     assert expected in q, "the three steps must render as one property path"
-    assert q.count("?s a <") == 1, "exactly one subject-class binding"
+    assert q.count("?s a/rdfs:subClassOf* <") == 1, \
+        "exactly one subject-class binding, closed over subclasses"
 
 
 def test_unsupported_question_is_reported_not_scored():
@@ -587,3 +588,37 @@ def test_question_with_nothing_to_execute_is_fatal():
     }
     with pytest.raises(OntologyError):
         Ontology.from_dict(spec).validate(strict=True)
+
+
+def test_subject_query_closes_over_subclasses():
+    """The entailment must not hide the population from the question.
+
+    `materialize()` specializes an asserted AreaCode to GeographicAreaCode.
+    A question asked of AreaCode must still reach it. An earlier version
+    generated `?s a <...#AreaCode>` with no closure, so CQ3 and CQ4 were
+    evaluated over the four non-geographic codes alone and CQ3's coverage was
+    published as 0.0% when it is 81.4%. The bug was invisible because the
+    number it produced was plausible.
+    """
+    from ufi.cq import sparql_for, run
+    onto, _ = _nanp()
+    cq3 = next(q for q in onto.questions if q.id == "CQ3")
+    assert "a/rdfs:subClassOf*" in sparql_for(cq3, onto, "http://e.org/n")
+    r = {x.id: x for x in run(onto, graph=_example_graph())}
+    assert r["CQ3"].n_subjects == 70, "all codes, not just the four dead ones"
+    assert r["CQ3"].n_answered > 0, "overlay siblings are in the shipped graph"
+    assert r["CQ3"].coverage > 0.8
+
+
+def test_unsupported_questions_do_not_enter_the_score():
+    """CQ5 is a declared gap; charging every entity for it is not a measurement.
+
+    Guards the pipeline, not just cq.run(). The earlier test covered only
+    cq.run() and so certified the opposite of what the shipped pipeline did.
+    """
+    from ufi.pipeline import GapRun
+    onto, _ = _nanp()
+    qs = [q for q in onto.questions_for_class("GeographicAreaCode")
+          if not q.unsupported]
+    assert all(q.id != "CQ5" for q in qs)
+    assert "CQ5" in {q.id for q in onto.questions}, "still declared"

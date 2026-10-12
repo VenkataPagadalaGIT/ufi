@@ -142,7 +142,7 @@ def sparql_for(cq: CompetencyQuestion, onto, base: str) -> str:
         f"^<{base}#{n}>" if inv else f"<{base}#{n}>"
         for n, inv in (_split(s) for s in path))
     return (f"SELECT ?s ?a WHERE {{\n"
-            f"  ?s a <{base}#{subject}> .\n"
+            f"  ?s a/rdfs:subClassOf* <{base}#{subject}> .\n"
             f"  ?s {rendered} ?a .\n"
             f"}}")
 
@@ -179,7 +179,8 @@ def run(onto, kg=None, graph=None, base: str = "") -> list[CQResult]:
             out.append(CQResult(cq.id, cq.template, False,
                                 "no relation, chain or sparql declared"))
             continue
-        subj_q = f"SELECT ?s WHERE {{ ?s a <{base}#{subject}> }}"
+        subj_q = (f"SELECT ?s WHERE "
+                  f"{{ ?s a/rdfs:subClassOf* <{base}#{subject}> }}")
         subjects = {r[0] for r in graph.query(subj_q)}
         pairs = {(r[0], r[1]) for r in graph.query(q)}
         answered = {s for s, _ in pairs} & subjects

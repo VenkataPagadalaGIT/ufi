@@ -96,7 +96,13 @@ class GapRun:
                 own[e] = 0.0
                 cov[e] = 0.0
 
-            qs = self.ontology.questions_for_class(self.graph.entities[e].cls)
+            # A question the ontology cannot express is a declared gap, not a
+            # score of zero. Scoring it would charge every entity for a
+            # question no page could answer from this model, and the gap is
+            # already reported by cq.run() where it means something.
+            qs = [q for q in
+                  self.ontology.questions_for_class(self.graph.entities[e].cls)
+                  if not q.unsupported]
             per_q: dict[str, float] = {}
             for q in qs:
                 if judge:
@@ -108,7 +114,11 @@ class GapRun:
                     per_q[q.id] = best
                 else:
                     per_q[q.id] = 0.0
-                ans_by_rel.setdefault(q.relation, {})[e] = per_q[q.id]
+                # Keyed on the question id, not the relation: a chain
+                # question carries relation "" and three such questions
+                # collapsed into one bucket in earlier versions, which shipped
+                # as the run's largest schema gap.
+                ans_by_rel.setdefault(q.id, {})[e] = per_q[q.id]
             ans[e] = per_q
 
         if judge:
