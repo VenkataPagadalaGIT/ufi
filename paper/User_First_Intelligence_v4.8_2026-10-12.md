@@ -397,7 +397,7 @@ Each is something this deployment got wrong, which is why its cost can be stated
 
 ## 12 Reproducibility, ethics and conflicts of interest
 
-**What is released.** The `ufi` reference implementation at **https://github.com/VenkataPagadalaGIT/ufi** under Apache 2.0, commit `0ae8678`: test suite, command line interface, and a worked example that runs offline on public data. The corrected numbering-plan ontology in YAML with OWL and SHACL export, and the area-code dataset the example uses. It has **no DOI**; a Zenodo deposit is outstanding. The exported OWL and SHACL mint terms under `urn:ufi:<name>` by default, which makes no resolution claim; no persistent namespace has been registered.
+**What is released.** The `ufi` reference implementation at **https://github.com/VenkataPagadalaGIT/ufi** under Apache 2.0, commit `6474350`: test suite, command line interface, and a worked example that runs offline on public data. The corrected numbering-plan ontology in YAML with OWL and SHACL export, and the area-code dataset the example uses. It has **no DOI**; a Zenodo deposit is outstanding. The exported OWL and SHACL mint terms under `urn:ufi:<name>` by default, which makes no resolution claim; no persistent namespace has been registered.
 
 **Data released with this version.** The twelve-prefix cross-section (Table 4) is released as two CSV files, one per instrument, each row carrying the prefix, the figures read, the read date and the read method, at `data/instrument_divergence/` in the repository named above.
 
