@@ -397,7 +397,7 @@ Each is something this deployment got wrong, which is why its cost can be stated
 
 ## 12 Reproducibility, ethics and conflicts of interest
 
-**What is released.** The `ufi` reference implementation at **https://github.com/VenkataPagadalaGIT/ufi** under Apache 2.0, commit `6474350`: test suite, command line interface, and a worked example that runs offline on public data. The corrected numbering-plan ontology in YAML with OWL and SHACL export, and the area-code dataset the example uses. It has **no DOI**; a Zenodo deposit is outstanding. The exported OWL and SHACL mint terms under `urn:ufi:<name>` by default, which makes no resolution claim; no persistent namespace has been registered.
+**What is released.** The `ufi` reference implementation at **https://github.com/VenkataPagadalaGIT/ufi** under Apache 2.0, version 0.2.0: test suite, command line interface, and a worked example that runs offline on public data. The corrected numbering-plan ontology in YAML with OWL and SHACL export, and the area-code dataset the example uses. It has **no DOI**; a Zenodo deposit is outstanding. The exported OWL and SHACL mint terms under `urn:ufi:<name>` by default, which makes no resolution claim; no persistent namespace has been registered.
 
 **Data released with this version.** The twelve-prefix cross-section (Table 4) is released as two CSV files, one per instrument, each row carrying the prefix, the figures read, the read date and the read method, at `data/instrument_divergence/` in the repository named above.
 
@@ -411,7 +411,7 @@ Each is something this deployment got wrong, which is why its cost can be stated
 
 **Corrections to earlier versions.** Appendix A is the single record of corrections across versions, including those that change how a figure must be read.
 
-**Organizational permission.** The organization that operates the section approved publication of the figures in this paper. Approval date: *[to be completed]*. Approving role and unit: *[to be completed]*. Scope: *[to be completed]*. **These three fields are unfilled, and the manuscript is not submitted anywhere until they are.** The organization is not named in this paper.
+**Organizational permission.** The organization that operates the section approved publication of the figures in this paper. Approval date: *[to be completed]*. Approving role and unit: *[to be completed]*. Scope: *[to be completed]*. **These three fields are unfilled, and the manuscript is not submitted anywhere until they are.** The organization is not named in this paper. Not naming it does not make it unidentifiable: the prefixes in Table 4 and the conflict-of-interest statement in Section 10 allow a reader with access to the same instruments to identify it, and that statement is kept because the disclosure is required. The name is withheld; the identity is not claimed to be concealed.
 
 **Conflicts of interest.** As stated in Section 10. The mitigations are weaker than the conflict: the primary result is two vendors' readings of a public prefix that any reader with the same subscriptions can re-read, the implementation is released so the specification can be checked against the description, and the designs in Section 11 are registered before their data exist.
 

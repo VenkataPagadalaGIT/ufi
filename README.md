@@ -169,7 +169,7 @@ each judgment's timestamp.
 ## Tests
 
 ```bash
-python -m pytest -q        # 50 passed
+python -m pytest -q        # 61 passed
 ```
 
 ## Licence and citation
