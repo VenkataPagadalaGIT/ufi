@@ -9,7 +9,7 @@ subscription. No API was used.
   `first_traffic_month` column is the first month with non-zero organic traffic
   in the all-time performance chart, read visually to the nearest month or
   quarter, and is the age proxy used in the paper. The instrument's history
-  begins in September 2015, so three ages are left-censored at that horizon.
+  begins in September 2015, so one age (/es-us/local/, first month 2015-09) is left-censored at that horizon; /deals/ (2015-10) and /stores/ (2016-01) lie close to it.
   `ahrefs_us_share` is the United States share of the prefix's estimated
   visits from the overview's traffic-by-location table, read 12 October 2026,
   used to territory-match the two instruments.
