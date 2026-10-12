@@ -1,12 +1,30 @@
 {
-  "title": "ufi: a reference implementation of the Content Gap Score, with the instrument-divergence data for 'Two Instruments, One Section'",
+  "title": "ufi: a reference implementation of User First Intelligence and the Content Gap Score",
   "upload_type": "software",
   "description": "Content gap scoring from industry structure and user questions: a reference implementation of the Content Gap Score at entity, relation and class level, the practitioner baselines it is compared against, and the reproducibility artifacts a study of it must publish (frozen query set, parameter lock, auditable judgment cache, run manifest). Includes a corrected numbering-plan ontology with OWL 2 and SHACL export, executable competency questions with schema and coverage pass rates, and the twelve-prefix two-instrument cross-section (12 October 2026) released with the manuscript. The score is a specification; no published study has tested whether it predicts anything.",
-  "creators": [{"name": "Pagadala, Venkata", "affiliation": "KL University; AT&T", "orcid": "0009-0001-2984-9265"}],
+  "creators": [
+    {
+      "name": "Pagadala, Venkata",
+      "affiliation": "KL University",
+      "orcid": "0009-0001-2984-9265"
+    }
+  ],
   "license": "Apache-2.0",
-  "keywords": ["content gap", "information retrieval", "search measurement", "instrument validity", "AI Overviews", "reproducibility", "competency questions"],
+  "keywords": [
+    "content gap",
+    "information retrieval",
+    "search measurement",
+    "instrument validity",
+    "AI Overviews",
+    "reproducibility",
+    "competency questions"
+  ],
   "related_identifiers": [
-    {"identifier": "https://github.com/VenkataPagadalaGIT/ufi", "relation": "isSupplementTo", "resource_type": "software"}
+    {
+      "identifier": "https://github.com/VenkataPagadalaGIT/ufi",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
   ],
   "version": "0.2.0"
 }
