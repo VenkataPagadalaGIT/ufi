@@ -20,6 +20,8 @@ from typing import TYPE_CHECKING, Any
 from .ontology import default_base
 
 if TYPE_CHECKING:
+    from rdflib.term import Node
+
     from .graph import KnowledgeGraph
     from .ontology import Ontology
 
@@ -90,7 +92,7 @@ def to_rdf(onto: Ontology, kg: KnowledgeGraph | None = None, base: str | None = 
             g.add((union, OWL.unionOf, node))
             g.add((cls, OWL.equivalentClass, union))
         if c.defined_by:
-            members = [NS[a] for a in c.defined_by.get("and", [])]
+            members: list[Node] = [NS[a] for a in c.defined_by.get("and", [])]
             for prop, rng in (c.defined_by.get("some") or {}).items():
                 restr = BNode()
                 g.add((restr, RDF.type, OWL.Restriction))
@@ -156,7 +158,7 @@ def to_rdf(onto: Ontology, kg: KnowledgeGraph | None = None, base: str | None = 
             g.add((prop, RDFS.comment, Literal(p.note)))
 
     if kg is not None:
-        by_class: dict[str, list[URIRef]] = {}
+        by_class: dict[str, list[Node]] = {}
         for e in kg.entities.values():
             ind = NS[_safe(e.id)]
             g.add((ind, RDF.type, OWL.NamedIndividual))
@@ -221,7 +223,7 @@ def validate(onto: Ontology, kg: KnowledgeGraph, shapes_ttl: str | None = None) 
     )
     targets: set[str] = set()
     for _s, _, o in shapes.triples((None, URIRef("http://www.w3.org/ns/shacl#targetClass"), None)):
-        targets.update(x for x in data.subjects(RDF.type, o))
+        targets.update(str(x) for x in data.subjects(RDF.type, o))
     n_violations = len(
         list(
             results_graph.subjects(RDF.type, URIRef("http://www.w3.org/ns/shacl#ValidationResult"))

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `scipy` declared as a dependency: networkx PageRank requires it at runtime, and a clean install failed without it.
 - CI across Python 3.10 to 3.13 (tests, lint, types, deterministic example, released-digest verification, paper statistics).
 - Lint-clean under ruff, type-clean under mypy, formatted; explicit public API in `ufi.__init__`.
 - Fixed a variable reuse in the OWL exporter's defined-class block and a shadowed loop variable in validation.
