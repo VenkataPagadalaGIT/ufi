@@ -167,7 +167,7 @@ def score_entities(entities: Sequence[str], rel: Mapping[str, float],
             cov_k=cov_k.get(e, 0.0), mean_ans=mean_ans,
             instance_gap=p * (1.0 - o) * inst, schema_gap=p * (1.0 - o) * schema,
             n_questions=len(a)))
-    return sorted(out, key=lambda s: -s.cgs)
+    return sorted(out, key=lambda s: (-s.cgs, s.entity))
 
 
 def schema_gap_by_relation(entities_by_relation: Mapping[str, Sequence[str]],

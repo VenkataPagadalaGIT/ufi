@@ -10,7 +10,7 @@ study has yet tested whether it predicts anything. This package exists so that
 such a study is possible: it computes the score, computes the baselines it has
 to beat, and emits the artifacts that make a result checkable.
 
-[![tests](https://img.shields.io/badge/tests-50%20passing-brightgreen)](tests/)
+[![tests](https://img.shields.io/badge/tests-61%20passing-brightgreen)](tests/)
 [![licence](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
 
 ## Install

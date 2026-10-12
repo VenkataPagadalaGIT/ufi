@@ -14,7 +14,7 @@ The object is a newly published reference section on a large US telecommunicatio
 
 A cross-section of twelve sections of the same domain, read on both instruments on one day, shows what a single series cannot. The vendor ratio on estimated visits runs from 0.20x to 7.24x across sections of one site, with a median of 1.01 and six of twelve below one; it shows no detectable relationship with section age (Spearman −0.11, 95% interval −0.64 to +0.49); and it does not follow the keyword-universe ratio, which runs 2x to 21x in one direction throughout. The section followed for 77 days sits near one extreme. The vendors agree on which section is larger in 60 of 66 pairs; the correction factor between them is what has no fixed sign or size, so no domain-level calibration converts one vendor's figure into the other's.
 
-The divergence is the primary result because it does not depend on the author's judgment: every reading is of a public prefix that any subscriber can re-read. The deployment series is reported as context. At day 37, the last observation before an automated link network arrived, the section held 15,830 ranking positions with nineteen referring domains; by day 77 it appeared in 17,206 stored AI answers across six platforms with no editorial link, and the pages most cited were the hubs that enumerate codes rather than the pages that answer. Six enabling conditions, the deployment's cost, and six lessons stated as its failures are given. No causal claim is made.
+The divergence is the primary result because it does not depend on the author's judgment: every reading is of a public prefix that any subscriber can re-read. The deployment series is reported as context. At day 37, the last observation before an automated link network arrived, the section held 15,830 ranking positions with nineteen referring domains; by day 77 it appeared in 17,206 stored AI answers with no editorial link, and the pages most cited were the hubs that enumerate codes rather than the pages that answer. Six enabling conditions, the deployment's cost, and six lessons stated as its failures are given. No causal claim is made.
 
 ## 1 Introduction
 
@@ -197,22 +197,22 @@ Figure 3 shows the two compositions side by side. A third figure from the first 
 
 Sections 5.1 to 5.4 are one prefix. Version 4.0 proposed that the narrowing of the visits ratio reflected section age and index coverage, and Section 11 registered a cross-prefix replication as the test. It was run on 12 October 2026, on both instruments, for twelve sections of the same domain: the area-code section and eleven others chosen to span ages from under two years to the instrument's horizon. Every figure below is a dashboard read on one date. The raw values, the read method, the age proxy and the United States share of each prefix's estimated visits are in the released data files, and **every statistic quoted in this section is printed by the script `analyze.py` released beside them**.
 
-*Table 4. Twelve URL prefixes on one domain, both instruments, read 12 October 2026. Age is months since the first month with organic traffic in the Ahrefs all-time series, read to the nearest month or quarter; the series begins in September 2015, so the oldest age (/es-us/local/) is left-censored at that horizon and the next two lie within four months of it. Ahrefs visits are worldwide and Semrush visits are the US database; the "US share" column is the United States share of Ahrefs' estimate from its traffic-by-location table, and the matched ratio divides Semrush US by Ahrefs US-only. The keyword ratio is Semrush over Ahrefs, like the visits ratios; the referring-domain ratio is Ahrefs over Semrush. Referring-domain counts are the 12 October reads and differ slightly from Section 5.4's 11 October read (80 Semrush domains, 11.4x).*
+*Table 4. Twelve URL prefixes on one domain, both instruments, read 12 October 2026. Age is months since the first month with organic traffic in the Ahrefs all-time series, read to the nearest month or quarter; the series begins in September 2015, so the oldest age (/es-us/local/) is left-censored at that horizon and the next two lie within four months of it. Ahrefs visits are worldwide and Semrush visits are the US database; the "US share" column is the United States share of Ahrefs' estimate from its traffic-by-location table, and the matched ratio divides Semrush US by Ahrefs US-only. The keyword ratio is Semrush over Ahrefs, like the visits ratios; the referring-domain ratio is Ahrefs over Semrush. Referring-domain and keyword counts are the 12 October reads and differ slightly from Sections 5.2 and 5.4's 10–11 October reads (29,000 and 58,586 keywords; 80 Semrush domains, 11.4x).*
 
 | Prefix | Age (mo) | Ahrefs visits | Semrush visits (US) | Ratio, unmatched | US share | Ratio, matched | Ahrefs kw | Semrush kw | Kw ratio | Ahrefs RD | Semrush RD | RD ratio |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| /local/area-codes/ | 3 | 221,000 | 1,600,000 | **7.24** | 81% | **8.89** | 28,900 | 59,000 | 2.0 | 913 | 81 | **11.3** |
-| /product-compare/ | 21 | 5,500 | 4,100 | 0.75 | 70% | 1.07 | 716 | 2,300 | 3.2 | 187 | 41 | 4.6 |
-| /local/bundles/ | 36 | 25,600 | 5,200 | 0.20 | 99% | 0.20 | 2,100 | 33,800 | 16.1 | 115 | 194 | 0.6 |
-| /device-compare/ | 39 | 26,700 | 26,400 | 0.99 | 83% | 1.20 | 2,400 | 12,600 | 5.2 | 47 | 45 | 1.0 |
-| /local/cell-phones/ | 57 | 37,300 | 135,100 | 3.62 | 99% | 3.67 | 3,600 | 37,500 | 10.4 | 144 | 225 | 0.6 |
-| /support/ | 93 | 1,900,000 | 1,957,880 | 1.03 | 99% | 1.04 | 38,700 | 351,854 | 9.1 | 10,600 | 7,056 | 1.5 |
-| /local/fiber/ | 95 | 102,000 | 47,300 | 0.46 | 100% | 0.46 | 5,400 | 31,900 | 5.9 | 258 | 245 | 1.1 |
-| /buy/ | 95 | 644,000 | 1,014,124 | 1.57 | 98% | 1.60 | 19,800 | 206,365 | 10.4 | 7,400 | 3,246 | 2.3 |
-| /local/internet/ | 114 | 243,000 | 220,600 | 0.91 | 94% | 0.97 | 13,300 | 79,700 | 6.0 | 1,700 | 516 | 3.3 |
-| /stores/ | 129 | 312,000 | 2,051,269 | 6.57 | 99% | 6.61 | 14,700 | 306,952 | 20.9 | 4,100 | 3,527 | 1.2 |
-| /deals/ | 132 | 214,000 | 219,600 | 1.03 | 99% | 1.03 | 5,300 | 32,000 | 6.0 | 1,600 | 2,042 | 0.8 |
-| /es-us/local/ | 133 | 8,900 | 2,200 | 0.25 | 43% | 0.58 | 1,300 | 4,800 | 3.7 | 284 | 62 | 4.6 |
+| /local/area-codes/ | 3 | 221,000 | 1,600,000 | **7.24** | 81.4% | **8.89** | 28,900 | 59,000 | 2.0 | 913 | 81 | **11.3** |
+| /product-compare/ | 21 | 5,500 | 4,100 | 0.75 | 69.6% | 1.07 | 716 | 2,300 | 3.2 | 187 | 41 | 4.6 |
+| /local/bundles/ | 36 | 25,600 | 5,200 | 0.20 | 99.2% | 0.20 | 2,100 | 33,800 | 16.1 | 115 | 194 | 0.6 |
+| /device-compare/ | 39 | 26,700 | 26,400 | 0.99 | 82.6% | 1.20 | 2,400 | 12,600 | 5.2 | 47 | 45 | 1.0 |
+| /local/cell-phones/ | 57 | 37,300 | 135,100 | 3.62 | 98.8% | 3.67 | 3,600 | 37,500 | 10.4 | 144 | 225 | 0.6 |
+| /support/ | 93 | 1,900,000 | 1,957,880 | 1.03 | 98.7% | 1.04 | 38,700 | 351,854 | 9.1 | 10,600 | 7,056 | 1.5 |
+| /local/fiber/ | 95 | 102,000 | 47,300 | 0.46 | 99.8% | 0.46 | 5,400 | 31,900 | 5.9 | 258 | 245 | 1.1 |
+| /buy/ | 95 | 644,000 | 1,014,124 | 1.57 | 98.5% | 1.60 | 19,800 | 206,365 | 10.4 | 7,400 | 3,246 | 2.3 |
+| /local/internet/ | 114 | 243,000 | 220,600 | 0.91 | 93.6% | 0.97 | 13,300 | 79,700 | 6.0 | 1,700 | 516 | 3.3 |
+| /stores/ | 129 | 312,000 | 2,051,269 | 6.57 | 99.4% | 6.61 | 14,700 | 306,952 | 20.9 | 4,100 | 3,527 | 1.2 |
+| /deals/ | 132 | 214,000 | 219,600 | 1.03 | 99.3% | 1.03 | 5,300 | 32,000 | 6.0 | 1,600 | 2,042 | 0.8 |
+| /es-us/local/ | 133 | 8,900 | 2,200 | 0.25 | 42.6% | 0.58 | 1,300 | 4,800 | 3.7 | 284 | 62 | 4.6 |
 
 ![Figure 4. Twelve URL prefixes on one domain, both instruments, 12 October 2026. Each marker is one prefix; the filled marker is the area-code section. (a) The Semrush over Ahrefs ratio on estimated visits, unmatched for territory, against section age in months since the first month with organic traffic in the Ahrefs all-time series, both axes logarithmic; the horizontal line is a ratio of one. (b) The same ratio against the Semrush over Ahrefs ratio on ranking keywords. Data in Table 4 and in the released file.](fig4_prefixes.pdf)
 
@@ -220,7 +220,7 @@ Six things follow (Figure 4), and the first retracts a claim this paper made in 
 
 **The cross-section shows no detectable relationship between the ratio and section age.** Spearman's rank correlation between age and the unmatched visits ratio is −0.11 over twelve prefixes, with a Fisher 95% interval of −0.64 to +0.49 and a permutation p of 0.73; territory-matched it is −0.28; excluding the area-code section it is +0.15. Twelve prefixes give roughly 38% power to detect a correlation of 0.5, so this is not a demonstration that no age effect exists. What it does establish is narrower and sufficient: the ratio does not converge on a common value as sections mature, because the seven sections aged between seven and eleven years sit anywhere from 0.25x to 6.57x unmatched (0.46x to 6.61x matched). The hypothesis in version 4.0, that each vendor's index fills in at its own rate and the ratio settles as a section ages, is withdrawn, and the narrowing of the area-code ratio from 27.1x to 7.5x over three months is reported as an observation on one section and not attributed. Only one prefix in the cross-section is under twenty-one months old, so the first months of a section's life are not characterized here beyond that one case.
 
-**The ratio is prefix-specific, and not one-directional.** Unmatched for territory, Semrush's estimate runs from one fifth of Ahrefs' (/local/bundles/, 0.20x) to seven times it (/local/area-codes/, 7.24x), a spread of 1.55 orders of magnitude, with a median of 1.01 and six of twelve prefixes below one. Matched for territory the spread is wider (0.20x to 8.89x), the median is 1.06, and four of twelve are below one, because two of the six sub-one prefixes cross one once their non-US traffic is removed (/product-compare/, 70% US, from 0.75x to 1.07x; /device-compare/, 83% US, from 0.99x to 1.20x); /es-us/local/, at 43% US, moves from 0.25x to 0.58x and stays below one. The territory objection therefore changes the count and not the conclusion: on the same domain, on the same day, the vendors' estimates differ by factors from well below one to well above it, and no single correction factor maps one onto the other.
+**The ratio is prefix-specific, and not one-directional.** Unmatched for territory, Semrush's estimate runs from one fifth of Ahrefs' (/local/bundles/, 0.20x) to seven times it (/local/area-codes/, 7.24x), a spread of 1.55 orders of magnitude, with a median of 1.01 and six of twelve prefixes below one. Matched for territory the spread is wider (0.20x to 8.89x), the median is 1.06, and four of twelve are below one, because two of the six sub-one prefixes cross one once their non-US traffic is removed (/product-compare/, 69.6% US, from 0.75x to 1.07x; /device-compare/, 82.6% US, from 0.99x to 1.20x); /es-us/local/, at 42.6% US, moves from 0.25x to 0.58x and stays below one. The territory objection therefore changes the count and not the conclusion: on the same domain, on the same day, the vendors' estimates differ by factors from well below one to well above it, and no single correction factor maps one onto the other.
 
 **The vendors agree on the ordering of sections and disagree on their magnitudes.** Across the twelve prefixes, the rank correlation between the two instruments' visit estimates is +0.94 (Kendall's tau +0.82, 60 of 66 pairs concordant). The vendors agree on which section is larger in 60 of 66 pairs; what has unknown sign and magnitude is the **correction factor** between the two instruments, which no domain-level constant captures. The consequence for practice is restated in Section 5.6 in that form.
 
@@ -397,7 +397,7 @@ Each is something this deployment got wrong, which is why its cost can be stated
 
 ## 12 Reproducibility, ethics and conflicts of interest
 
-**What is released.** The `ufi` reference implementation at **https://github.com/VenkataPagadalaGIT/ufi** under Apache 2.0, version 0.2.0: test suite, command line interface, and a worked example that runs offline on public data. The corrected numbering-plan ontology in YAML with OWL and SHACL export, and the area-code dataset the example uses. It has **no DOI**; a Zenodo deposit is outstanding. The exported OWL and SHACL mint terms under `urn:ufi:<name>` by default, which makes no resolution claim; no persistent namespace has been registered.
+**What is released.** The `ufi` reference implementation at **https://github.com/VenkataPagadalaGIT/ufi** under Apache 2.0, version 0.2.0: test suite, command line interface, and a worked example that runs offline on public data. The corrected numbering-plan ontology in YAML with OWL and SHACL export, and the area-code dataset the example uses. The frozen 924-query set, the parameter lock and the run manifest are committed in the repository at `examples/nanp/out/`, so the digests quoted in Sections 11 and Appendix B resolve to released files. It has **no DOI**; a Zenodo deposit is outstanding. The exported OWL and SHACL mint terms under `urn:ufi:<name>` by default, which makes no resolution claim; no persistent namespace has been registered.
 
 **Data released with this version.** The twelve-prefix cross-section (Table 4) is released as two CSV files, one per instrument, each row carrying the prefix, the figures read, the read date and the read method, at `data/instrument_divergence/` in the repository named above.
 
@@ -426,8 +426,6 @@ The deployment underneath that measurement is reported as context. Following the
 The framework under which the section was built, User First Intelligence, is specified in Appendix B and released as an open implementation with executable competency questions, whose schema pass rate and instance coverage are reported separately. Its scoring function is not evaluated here. Section 11 registers the prospective study, with parameters locked before any data exist, that would test whether it identifies gaps worth building.
 
 ## References
-
-Twenty-nine entries, each cited in the text.
 
 Balaraman, V., Razniewski, S., & Nutt, W. (2018). Recoin: Relative completeness in Wikidata. In *Companion Proceedings of The Web Conference 2018* (pp. 1787–1792). ACM.
 

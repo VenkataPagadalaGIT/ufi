@@ -5,5 +5,8 @@ __pycache__/
 .venv/
 build/
 dist/
-examples/nanp/out/
+examples/nanp/out/*
+!examples/nanp/out/frozen_queries.json
+!examples/nanp/out/parameters.lock.json
+!examples/nanp/out/manifest.json
 examples/nanp/data/registry/
