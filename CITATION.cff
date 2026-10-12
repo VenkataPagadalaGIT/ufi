@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "ufi: a reference implementation of the Content Gap Score"
+title: "ufi: a reference implementation of User First Intelligence and the Content Gap Score"
 repository-code: "https://github.com/VenkataPagadalaGIT/ufi"
 url: "https://github.com/VenkataPagadalaGIT/ufi"
 message: "If you use this software, please cite it."

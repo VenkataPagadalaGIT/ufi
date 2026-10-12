@@ -1,34 +1,69 @@
-# ufi — content gap scoring from industry structure and user questions
+<p align="center">
+  <img src="docs/figures/framework.png" alt="The User First Intelligence framework: thirteen demand surfaces beyond the website, classified and linked into an ontology and knowledge graph, asked competency questions, scored for gaps, and measured on two commercial instruments" width="920">
+</p>
 
-A reference implementation of the Content Gap Score: a way of ranking what an
-organization should publish from the structure of an industry's knowledge and
-from questions users actually asked, rather than from a keyword tool's volume
-estimate.
+<h1 align="center">User First Intelligence</h1>
 
-**The score is a specification, not a validated instrument.** No published
-study has yet tested whether it predicts anything. This package exists so that
-such a study is possible: it computes the score, computes the baselines it has
-to beat, and emits the artifacts that make a result checkable.
+<p align="center">
+  Find the content gaps an industry has from what people ask, wherever they ask it,<br>
+  not from what a keyword tool counts.
+</p>
 
-[![tests](https://img.shields.io/badge/tests-61%20passing-brightgreen)](tests/)
-[![licence](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
+<p align="center">
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-61%20passing-brightgreen" alt="tests"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-blue" alt="licence"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/version-0.2.0-lightgrey" alt="version"></a>
+  <a href="paper/"><img src="https://img.shields.io/badge/paper-preprint%20v4.8-orange" alt="paper"></a>
+  <a href="CITATION.cff"><img src="https://img.shields.io/badge/cite-CITATION.cff-9cf" alt="cite"></a>
+</p>
 
-## Install
+---
+
+## What this is
+
+`ufi` is the reference implementation of **User First Intelligence (UFI)**, a framework for deciding what an organization should publish.
+
+The premise: people say what they want to know in many places that are not a search box: forum threads, question sites, video comments, reviews, support tickets, social groups. Keyword-volume tools see the fraction of that demand that reaches a search engine in a countable phrasing, and they are good for *direction* but not for *magnitude* (the released data shows two major tools agreeing on which section of a site is bigger in 60 of 66 pairs while differing on the size by 0.2x to 8.9x). So UFI goes to where the questions are:
+
+1. **Collect** user questions across thirteen demand surfaces, beyond the website.
+2. **Classify and link** them to the entities of an industry held under an **ontology**.
+3. **Hold** the result in a **knowledge graph** whose structure, coverage and demand sources are kept in separate roles, so a competitor's coverage can never pose as user demand.
+4. **Ask** that graph **competency questions**, executably, and report schema pass rate and instance coverage separately.
+5. **Score** where the organization does not answer, with the **Content Gap Score**, and treat the form the answer should take as something to measure.
+
+**What is validated and what is not, stated up front.** The pipeline, the guardrails, the ontology tooling and the reproducibility artifacts are implemented and tested. The Content Gap Score itself is a specification: no published study has yet tested whether it predicts anything. This package exists so that such a study is possible, and so that any claim made with it is checkable.
+
+## Quick start
 
 ```bash
-pip install -e ".[dev]"        # includes the RDF extras
+git clone https://github.com/VenkataPagadalaGIT/ufi
+cd ufi
+pip install -e ".[dev]"      # includes the RDF extras (rdflib, pyshacl, owlready2)
 ufi --version
+
+cd examples/nanp
+python make_demo_inputs.py   # deterministic synthetic inputs, no network, no model
+python build_example.py      # full run in a couple of seconds
 ```
 
-Python 3.10+. Core needs `networkx` and `pyyaml`. The RDF path (OWL export,
-SHACL validation, reasoning) needs `rdflib`, `pyshacl` and `owlready2`, and a
-JVM for HermiT; install with `pip install "ufi[rdf]"`.
+The example runs over the 66 US geographic area codes in its registry extract and prints, among other things:
+
+```
+reasoner: HermiT (owlready2), consistent=True, 66 individuals reclassified by entailment
+SHACL: 70 focus nodes, 0 violations, vacuous=False
+schema pass rate:   4/5 (80%) of declared questions the ontology can express
+instance coverage:  70.4% mean over supported questions; 2/4 answered for every subject
+demand: 177 records, 177 links, first-party share 0.00, synthetic share 1.00
+manifest digest 4a7596a507cbd5f8  judgments 1386 (calls 0, cache hits 1188)
+```
+
+> **What is real and what is not.** The ontology and the area-code facts are real. The demand records, reported volumes and retrieved-result evidence are **synthetic**, generated with a fixed seed. Every synthetic record is flagged, the flag propagates, and the run reports a first-party demand share of 0.00 so that nothing computed from it can be mistaken for an observation about users. That is the example working correctly.
 
 ## The score
 
 ```
 prior(e) = β·rel(e) + (1 − β)·dem(e)
-CGS(e)   = prior(e) · (1 − own(e)) · [ α·(1 − cov_K(e)) + (1−α)·mean_q(1 − ans(q,e)) ]
+CGS(e)   = prior(e) · (1 − own(e)) · [ α·(1 − cov_K(e)) + (1 − α)·mean_q(1 − ans(q,e)) ]
 ```
 
 | Term | Meaning | Source class |
@@ -39,132 +74,91 @@ CGS(e)   = prior(e) · (1 − own(e)) · [ α·(1 − cov_K(e)) + (1−α)·mean
 | `cov_K(e)` | mean of the same grade over the competitor set `K` | coverage |
 | `ans(q,e)` | whether the web answers competency question `q` about `e` | answerability |
 
-`α` moves weight between the two deficits, `β` between structure and demand.
-The first bracket term is the **instance gap** (nobody covers this entity), the
-second the **schema gap** (nobody answers this question about it). Both are
-reported separately, because a score that mixes them says an entity is a gap
-without saying what kind, and the two call for different content.
+`α` moves weight between the two deficits; `β` between structure and demand. The first bracket term is the **instance gap** (nobody covers this entity), the second the **schema gap** (nobody answers this question about it). They are reported separately because they call for different content. Reported search volume is not an input. Full specification: Appendix B of the [paper](paper/).
 
-Reported search volume is not an input.
+## Where the questions come from
 
-## Worked example
+Thirteen demand surfaces, grouped by whether they carry a user's own words or a tool's reconstruction of demand. A run prints which surfaces returned rows, so a demand term computed from nothing is visible rather than implied.
 
-```bash
-cd examples/nanp
-python make_demo_inputs.py
-python build_example.py
+| First-party voice (the user's own words) | Tool-derived |
+|---|---|
+| forum · Q&A site · social group · social post · short video · long video · business reviews · review platform · app-store review · support ticket | people also ask · autocomplete · keyword export |
+
+Adding a surface is one adapter class. Collection itself (API keys, rate limits, terms of service) belongs to the deployment, not the package. Details: [docs/DEMAND_SURFACES.md](docs/DEMAND_SURFACES.md).
+
+## Command line
+
+| Command | What it does |
+|---|---|
+| `ufi validate ontology.yaml` | check the ontology and its competency questions before scoring |
+| `ufi owl ontology.yaml -o nanp.owl` | export OWL 2 and SHACL shapes |
+| `ufi cq ontology.yaml --graph kg.nt` | run competency questions against a graph; print both rates |
+| `ufi freeze queries.txt -o frozen.json` | hash the evaluation query set before launch |
+| `ufi lock -o params.lock.json` | pin α, β and damping before scoring |
+| `ufi verify frozen.json` | confirm a frozen set is intact |
+| `ufi manifest out/manifest.json` | print a run's reproducibility digest |
+
+Scoring is a library call rather than a subcommand, because a run needs evidence suppliers wired to a deployment's own crawls; `examples/nanp/build_example.py` is the template to copy. Full reference: [docs/CLI.md](docs/CLI.md).
+
+## How it is built
+
+```
+src/ufi/
+├── types.py        core value types; SourceClass puts structure / coverage / demand on provenance
+├── ontology.py     ontology spec, competency questions, validation, OWL + SHACL export
+├── cq.py           executable competency questions: chain validation, SPARQL generation, two rates
+├── graph.py        the knowledge graph, with the source-class separation enforced
+├── demand.py       thirteen demand-surface adapters, entity linking, coverage report
+├── judge.py        graders for the three subjective inputs; judgments cached with their context
+├── score.py        the Content Gap Score and its components
+├── baselines.py    the practitioner baselines, on the same candidate list
+├── rdf.py          RDF serialization, HermiT reasoning, SHACL validation, materialization
+├── provenance.py   query freezing, parameter locking, the run manifest
+├── pipeline.py     end to end: ontology + graph + demand + judgments → ranked gaps
+└── cli.py          the commands above
 ```
 
-Runs offline in a couple of seconds over 66 US geographic area codes:
+Design decisions and the reasons for them: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-```
-reasoner: HermiT (owlready2), consistent=True, 66 individuals reclassified by entailment
-SHACL: 70 focus nodes, 0 violations, vacuous=False
-demand: 177 records, 177 links, first-party share 0.00, synthetic share 1.00
-```
+## Guardrails: five things the package makes hard to get wrong
 
-**What is real and what is not.** The ontology and the area-code facts are
-real. The demand records, the reported volumes and the retrieved-result
-evidence are synthetic, generated with a fixed seed so the example is
-deterministic and needs no network and no model. Every synthetic record is
-flagged as such and the flag propagates: the run reports a first-party demand
-share of 0.00 and a synthetic share of 1.00, and `ufi manifest` says in plain
-words that nothing computed from it is an observation about users. That is the
-example working correctly, not failing.
+- **Structure and coverage stay separate.** Only structure-sourced triples reach the relatedness graph, so well-covered entities cannot rank as gaps.
+- **A demand term with nothing behind it is visible.** The coverage report lists every designed surface, including the ones that produced nothing; synthetic records are excluded from the first-party share.
+- **A query universe defined after the outcome is marked.** `freeze_queries()` writes the evaluation set with a hash and refuses to overwrite.
+- **Judgments are cached with their context.** Subject, question, rubric identifier and evidence digest, not just a grade; changing the rubric misses the cache.
+- **An empty validation is not a clean one.** `rdf.validate()` refuses to call a run conformant when it had nothing to check; `rdf.reason()` reports how many assertions were inferred.
 
-## Five things the package makes hard to get wrong
-
-**Structure and coverage stay separate.** `structure_subgraph()` returns only
-triples whose provenance is a structure source. If coverage evidence reached
-the relatedness graph, an entity competitors cover well would gain edges,
-centrality and prior, and the score would rank covered entities above
-uncovered ones — the opposite of its purpose.
-
-**A demand term with nothing behind it is visible.** `coverage_report()` lists
-every designed surface including the ones that produced nothing.
-`first_party_share()` reports how much evidence is in a user's own words rather
-than reconstructed by a keyword tool, and excludes synthetic records from the
-numerator. A run at 0.0 does not support a claim about users, and the CLI says
-so rather than leaving it to the reader.
-
-**A query universe defined after the outcome is marked as such.**
-`freeze_queries()` writes the evaluation set with a hash and refuses to
-overwrite. A run with no frozen set records `none:query-set-not-frozen` rather
-than an empty field, because "not frozen" and "not checked" are different
-claims.
-
-**Judgments are cached with their context.** Each cached row carries the
-subject, the question, the rubric identifier and a digest of the evidence, not
-just a grade. A cache of anonymous grades cannot be re-graded by a second
-annotator or traced back to a published number, which are the two things a
-released cache is for. Changing the rubric text misses the cache, so grades
-from two rubrics can never silently mix.
-
-**An empty validation is not a clean one.** `rdf.validate()` reports the number
-of focus nodes and refuses to call a run conformant when it had nothing to
-check. `rdf.reason()` reports how many class assertions were actually inferred,
-so "a reasoner ran" can be told apart from "a reasoner had something to do".
-
-## Making the ontology load-bearing
-
-The example asserts only what the registry states: that something is an area
-code, and a place it serves. Whether it is a *geographic* area code is an
-entailment, derived by `rdf.materialize()`:
-
-```python
-from ufi.rdf import materialize
-materialize(onto, kg)       # 66 individuals reclassified
-```
-
-This is deliberate. An ontology whose deletion would change no downstream
-number is decorative, and the way to tell is to put the classification in the
-reasoner instead of the loader.
+Why each exists, and what an adversarial review of the package found: [docs/GUARDRAILS.md](docs/GUARDRAILS.md).
 
 ## Reproducibility
 
-```bash
-ufi manifest examples/nanp/out/manifest.json
-```
+Every run writes a manifest whose digest covers the ontology, the graph, the judgment cache, the parameters and the frozen query set, and deliberately excludes timestamps and the grader's model string. The frozen artifacts behind the paper are committed:
 
-Two runs with the same digest produce the same numbers. The digest covers the
-ontology, the graph, the judgment cache, the parameters and the frozen query
-set, and deliberately excludes timestamps and the grader's model string: a
-judgment made on a different day produces the same score, and a digest that
-moved with it would report a difference that does not exist.
+| Artifact | Path | Digest |
+|---|---|---|
+| frozen query set (924 queries over 66 codes) | `examples/nanp/out/frozen_queries.json` | `f05ce279942be5f8` |
+| parameter lock (α = 0.5, β = 0.5, damping = 0.85) | `examples/nanp/out/parameters.lock.json` | `7290a2235d8de05f` |
+| run manifest | `examples/nanp/out/manifest.json` | |
+
+Details: [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+
+## The paper and its data
+
+**User First Intelligence: Ontology-Driven Content Gap Discovery from Multi-Source Industry Knowledge Graphs Beyond Search Volume**, preprint v4.8, 12 October 2026: [`paper/`](paper/) (PDF, DOCX, source bundle).
+
+The paper's measurement result, two commercial instruments read on twelve sections of one domain on one day, ships as data plus the script that prints every statistic quoted: [`data/instrument_divergence/`](data/instrument_divergence/).
+
+```bash
+cd data/instrument_divergence && python analyze.py
+```
 
 ## Known limitations
 
-Stated here rather than discovered by a reader.
-
-- **`rel` is strongly correlated with node degree** on sparse graphs. On the
-  worked example's structure graph, which is a two-hop star through time-zone
-  and overlay hubs, the correlation is about 0.8. On such a graph `rel` largely
-  measures how many facts a code has, not how central it is. Check the
-  correlation on your own graph before trusting the prior.
-- **The three-level rubric is coarse.** Half credit covers a wide range.
-- **`ans` takes the best of several verbalizations**, so a question set whose
-  verbalizations differ in difficulty rewards answering the easiest one.
-- **No entity linker beyond longest-match alias search.** Adequate for
-  identifiers, not for ambiguous names.
-- **The NANP ontology is a nine-class sketch**, sufficient for the example and
-  not yet a resource-grade vocabulary. It has no Wikidata reconciliation, no
-  published namespace document and no DOI.
-
-## What an adversarial review found, and what changed
-
-This package was reviewed by a simulated Tier-1 panel that executed it. The
-findings were real and the fixes are in this repository: the OWL export dropped
-every property alignment and emitted a bare name where an IRI was required, so
-the file did not parse; data properties were inexpressible, so the class whose
-identity criterion is a code pair could not record the pair; the judgment cache
-stored anonymous grades; `kendall_tau` was documented as tau-b and computed
-tau-a over heavily tied input; the volume and question-mining baselines were
-fed the same numbers; two referenced files did not exist; and the demo reported
-a healthy first-party demand share on wholly synthetic data.
-
-Building the package also found a defect in its own reasoning: the manifest
-digest moved between two identical runs, because the cache fingerprint included
-each judgment's timestamp.
+- `rel` is strongly correlated with node degree on sparse graphs (about 0.8 on the example); check it on your own graph before trusting the prior.
+- The three-level rubric is coarse; half credit covers a wide range.
+- `ans` takes the best of several verbalizations, which rewards the easiest phrasing.
+- The entity linker is longest-match over aliases: adequate for identifiers, not for ambiguous names.
+- The NANP ontology is a nine-class sketch, not yet a resource-grade vocabulary; terms are minted under `urn:ufi:` because no persistent namespace has been registered, and the package has no DOI yet.
 
 ## Tests
 
@@ -172,7 +166,6 @@ each judgment's timestamp.
 python -m pytest -q        # 61 passed
 ```
 
-## Licence and citation
+## Contributing, citing, licence
 
-Apache 2.0 for the code. The ontology and the bundled area-code dataset are
-CC BY 4.0. See `CITATION.cff`.
+Contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md) and the [CHANGELOG](CHANGELOG.md). To cite, use [`CITATION.cff`](CITATION.cff). Apache 2.0 for the code; the ontology and the bundled area-code dataset are CC BY 4.0.
