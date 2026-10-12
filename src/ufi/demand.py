@@ -216,6 +216,44 @@ class EntityLinker(ABC):
     def link(self, text: str) -> list[str]: ...
 
 
+class TokenLinker(EntityLinker):
+    """Word-n-gram exact-match linker.
+
+    The same rule as `AliasLinker` (case-insensitive, whole-word, every alias
+    that occurs) as a hash lookup over word n-grams, so tens of thousands of
+    aliases link tens of thousands of texts in seconds rather than hours. One
+    deliberate difference: punctuation between words is ignored, so the alias
+    "5g trade-in" matches "5G! trade-in". On punctuation-free text the two
+    linkers agree exactly, and otherwise this one links a superset; the test
+    suite pins both properties.
+    """
+
+    _WORD = re.compile(r"[a-z0-9]+(?:['&-][a-z0-9]+)*")
+
+    def __init__(self, aliases: dict[str, Sequence[str]]):
+        self.table: dict[tuple[str, ...], list[str]] = {}
+        self.max_n = 1
+        for eid, names in aliases.items():
+            for n in set(names):
+                toks = tuple(self._WORD.findall(n.lower()))
+                if not toks:
+                    continue
+                self.table.setdefault(toks, [])
+                if eid not in self.table[toks]:
+                    self.table[toks].append(eid)
+                self.max_n = max(self.max_n, len(toks))
+
+    def link(self, text: str) -> list[str]:
+        toks = self._WORD.findall(text.lower())
+        hits: list[str] = []
+        for i in range(len(toks)):
+            for n in range(1, min(self.max_n, len(toks) - i) + 1):
+                for eid in self.table.get(tuple(toks[i : i + n]), ()):
+                    if eid not in hits:
+                        hits.append(eid)
+        return hits
+
+
 class AliasLinker(EntityLinker):
     """Longest-match linker over entity labels and aliases.
 

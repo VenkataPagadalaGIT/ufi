@@ -36,6 +36,7 @@ from .demand import (
     DemandIndex,
     DemandRecord,
     JsonLinesAdapter,
+    TokenLinker,
 )
 from .graph import KnowledgeGraph, ProvenanceError
 from .judge import (
@@ -106,6 +107,7 @@ __all__ = [
     "RuleJudge",
     "RunManifest",
     "SourceClass",
+    "TokenLinker",
     "Triple",
     "aggregate_to_class",
     "agreement",

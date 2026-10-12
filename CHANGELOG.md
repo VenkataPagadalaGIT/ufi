@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `TokenLinker`: word-n-gram exact-match linker with the same rule as `AliasLinker`, orders of magnitude faster on large alias sets; equivalence on punctuation-free text pinned by test.
 - `scipy` declared as a dependency: networkx PageRank requires it at runtime, and a clean install failed without it.
 - CI across Python 3.10 to 3.13 (tests, lint, types, deterministic example, released-digest verification, paper statistics).
 - Lint-clean under ruff, type-clean under mypy, formatted; explicit public API in `ufi.__init__`.

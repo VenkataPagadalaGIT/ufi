@@ -739,3 +739,41 @@ def test_unsupported_questions_do_not_enter_the_score():
     qs = [q for q in onto.questions_for_class("GeographicAreaCode") if not q.unsupported]
     assert all(q.id != "CQ5" for q in qs)
     assert "CQ5" in {q.id for q in onto.questions}, "still declared"
+
+
+def test_token_linker_agrees_with_alias_linker():
+    import random
+
+    from ufi.demand import AliasLinker, TokenLinker
+
+    rng = random.Random(7)
+    words = [
+        "phone",
+        "bill",
+        "store",
+        "wait",
+        "fiber",
+        "plan",
+        "upgrade",
+        "trade-in",
+        "5g",
+        "signal",
+        "manager",
+        "line",
+        "credit",
+        "refund",
+        "hours",
+    ]
+    aliases = {f"e{i}": [" ".join(rng.sample(words, rng.randint(1, 3)))] for i in range(60)}
+    a, b = AliasLinker(aliases), TokenLinker(aliases)
+    for _ in range(300):
+        text = " ".join(
+            rng.choice([*words, "the", "a", "was", "Very"]) for _ in range(rng.randint(3, 25))
+        )
+        assert sorted(a.link(text)) == sorted(b.link(text)), text
+    # with interior punctuation the token linker links a superset, by design
+    for _ in range(300):
+        text = " ".join(
+            rng.choice([*words, "5G!", "trade-in,", "plan."]) for _ in range(rng.randint(3, 25))
+        )
+        assert set(a.link(text)) <= set(b.link(text)), text
