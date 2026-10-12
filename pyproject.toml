@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ufi"
-version = "0.1.0"
+version = "0.2.0"
 description = "Content gap scoring from industry structure and user questions: a reference implementation of the Content Gap Score"
 readme = "README.md"
 requires-python = ">=3.10"
