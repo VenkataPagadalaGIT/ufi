@@ -16,6 +16,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from .ontology import default_base
+
 if TYPE_CHECKING:
     from .graph import KnowledgeGraph
     from .ontology import Ontology
@@ -47,7 +49,7 @@ def to_rdf(onto: "Ontology", kg: "KnowledgeGraph | None" = None,
            base: str | None = None) -> "Graph":
     """Build an RDF graph of the ontology, and of the instances when given."""
     _require()
-    base = base or f"http://w3id.org/ufi/{onto.name}"
+    base = base or default_base(onto.name)
     NS = Namespace(base + "#")
     g = Graph()
     g.bind("", NS)

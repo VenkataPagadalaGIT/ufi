@@ -28,6 +28,8 @@ about what the question asks.
 """
 from __future__ import annotations
 
+from .ontology import default_base
+
 from dataclasses import dataclass
 
 from .types import CompetencyQuestion
@@ -162,7 +164,7 @@ def run(onto, kg=None, graph=None, base: str = "") -> list[CQResult]:
         if kg is None:
             raise ValueError("run() needs a KnowledgeGraph or an rdflib Graph")
         graph = _rdf.to_rdf(onto, kg, base=base or None)
-    base = base or f"http://w3id.org/ufi/{onto.name}"
+    base = base or default_base(onto.name)
 
     out: list[CQResult] = []
     for cq in onto.questions:

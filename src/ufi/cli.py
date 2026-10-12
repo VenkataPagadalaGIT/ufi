@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
-from .ontology import Ontology, OntologyError
+from .ontology import Ontology, OntologyError, default_base
 from .provenance import freeze_queries, lock_parameters, verify_frozen
 from .score import Parameters
 
@@ -76,7 +76,7 @@ def _cq(a) -> int:
         print(f'needs the rdf extras ({exc}); pip install "ufi[rdf]"',
               file=sys.stderr)
         return 2
-    base = a.base or f"http://w3id.org/ufi/{onto.name}"
+    base = a.base or default_base(onto.name)
     g = Graph()
     g.parse(a.graph, format=a.format)
     results = _cq_mod.run(onto, graph=g, base=base)

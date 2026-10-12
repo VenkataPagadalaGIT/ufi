@@ -57,6 +57,20 @@ class PropertySpec:
     note: str = ""
 
 
+def default_base(name: str) -> str:
+    """The IRI namespace an ontology's terms are minted under when none is given.
+
+    A URN, deliberately. Earlier versions minted every term under
+    http://w3id.org/ufi/<name>, a persistent-identifier authority this
+    project does not control and had not registered, so every exported file
+    carried identifiers that resolved to nothing and implied a namespace
+    document that did not exist. A URN makes no resolution claim. Anyone
+    publishing an ontology built with this package should pass `base=` with
+    a namespace they own and serve.
+    """
+    return f"urn:ufi:{name}"
+
+
 def _esc(text: str) -> str:
     return text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").strip()
 
@@ -290,7 +304,8 @@ class Ontology:
             tuple(sorted(q.id for q in self.questions)),
         )
 
-    def to_owl(self, individuals: "KnowledgeGraph | None" = None) -> str:
+    def to_owl(self, individuals: "KnowledgeGraph | None" = None,
+               base: str | None = None) -> str:
         """Emit OWL 2 functional syntax that a reasoner can load.
 
         An earlier version of this method dropped every property alignment and
@@ -302,7 +317,7 @@ class Ontology:
         selects no focus nodes and reports no violations, which is easily
         mistaken for a clean validation.
         """
-        base = f"http://w3id.org/ufi/{self.name}"
+        base = base or default_base(self.name)
         ext = {"ext": "http://www.w3.org/2002/07/owl#Thing"}
         L = [f"Prefix(:=<{base}#>)",
              "Prefix(owl:=<http://www.w3.org/2002/07/owl#>)",
@@ -424,9 +439,9 @@ class Ontology:
         L.append(")")
         return "\n".join(L)
 
-    def to_shacl(self) -> str:
+    def to_shacl(self, base: str | None = None) -> str:
         """Emit SHACL shapes for the cardinalities the ontology declares."""
-        base = f"http://w3id.org/ufi/{self.name}"
+        base = base or default_base(self.name)
         L = ["@prefix sh: <http://www.w3.org/ns/shacl#> .",
              "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .",
              f"@prefix : <{base}#> .", ""]

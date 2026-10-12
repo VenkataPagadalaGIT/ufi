@@ -13,7 +13,6 @@ date-released: 2026-10-12
 keywords:
   - content gap
   - information retrieval
-  - knowledge graph
   - reproducibility
 abstract: >
   Content gap scoring from industry structure and user questions. Implements
