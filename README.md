@@ -18,7 +18,7 @@
   <a href="https://mypy-lang.org/"><img src="https://img.shields.io/badge/types-mypy%20clean-blue" alt="mypy"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-Apache--2.0-blue" alt="licence"></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/version-0.2.0-lightgrey" alt="version"></a>
-  <a href="paper/"><img src="https://img.shields.io/badge/paper-preprint%20v4.8-orange" alt="paper"></a>
+  <a href="paper/"><img src="https://img.shields.io/badge/paper-preprint%20v5.5-orange" alt="paper"></a>
   <a href="CITATION.cff"><img src="https://img.shields.io/badge/cite-CITATION.cff-9cf" alt="cite"></a>
 </p>
 
@@ -149,7 +149,7 @@ Details: [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
 
 ## The paper and its data
 
-**User First Intelligence: Ontology-Driven Content Gap Discovery from Multi-Source Industry Knowledge Graphs Beyond Search Volume**, preprint v4.8, 12 October 2026: [`paper/`](paper/) (PDF, DOCX, source bundle).
+**User First Intelligence for Traditional and AI Search (SEO and GEO/AEO): Ontology-Driven Query Discovery from Multi-Source Knowledge Graphs Beyond Search Volume**, preprint v5.5, 14 November 2026, submitted to arXiv (cs.IR): [`paper/`](paper/) (PDF, DOCX, Markdown, source bundle). It replaces v4.8; see [`paper/README.md`](paper/README.md) for the correction that goes with it.
 
 The paper's measurement result, two commercial instruments read on twelve sections of one domain on one day, ships as data plus the script that prints every statistic quoted: [`data/instrument_divergence/`](data/instrument_divergence/).
 
