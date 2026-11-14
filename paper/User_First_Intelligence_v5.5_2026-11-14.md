@@ -1,4 +1,4 @@
-# User First Intelligence for Traditional and AI Search (SEO and GEO/AEO): Ontology-Driven Query Discovery from Multi-Source Knowledge Graphs Beyond Search Volume
+# User First Intelligence: Three Measurements of Search and AI-Answer Analytics (SEO and GEO/AEO), and a Knowledge-Graph Framework for Query Discovery Beyond Search Volume
 
 **Venkata Pagadala**\
 Research Scholar (Ph.D. in progress, Artificial Intelligence), KL University (Koneru Lakshmaiah Education Foundation), India\

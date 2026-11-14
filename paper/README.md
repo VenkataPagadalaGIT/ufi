@@ -1,7 +1,7 @@
 # Manuscript
 
-"User First Intelligence for Traditional and AI Search (SEO and GEO/AEO):
-Ontology-Driven Query Discovery from Multi-Source Knowledge Graphs Beyond
+"User First Intelligence: Three Measurements of Search and AI-Answer Analytics
+(SEO and GEO/AEO), and a Knowledge-Graph Framework for Query Discovery Beyond
 Search Volume", version 5.5, 14 November 2026. Preprint, not peer reviewed.
 Submitted to arXiv (cs.IR) on 14 November 2026; the arXiv identifier will be
 added here when it is assigned.
