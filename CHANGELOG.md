@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Manuscript v5.5 (14 November 2026) replaces v4.8 in `paper/`, with its source bundle. Version 4.8 said the organization operating the section studied had approved publication; it had not, and the statement is withdrawn (`paper/README.md`).
 - `TokenLinker`: word-n-gram exact-match linker with the same rule as `AliasLinker`, orders of magnitude faster on large alias sets; equivalence on punctuation-free text pinned by test.
 - `scipy` declared as a dependency: networkx PageRank requires it at runtime, and a clean install failed without it.
 - CI across Python 3.10 to 3.13 (tests, lint, types, deterministic example, released-digest verification, paper statistics).
