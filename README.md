@@ -149,7 +149,7 @@ Details: [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
 
 ## The paper and its data
 
-**User First Intelligence for Traditional and AI Search (SEO and GEO/AEO): Ontology-Driven Query Discovery from Multi-Source Knowledge Graphs Beyond Search Volume**, preprint v5.5, 14 November 2026, submitted to arXiv (cs.IR): [`paper/`](paper/) (PDF, DOCX, Markdown, source bundle). It replaces v4.8; see [`paper/README.md`](paper/README.md) for the correction that goes with it.
+**User First Intelligence: Three Measurements of Search and AI-Answer Analytics (SEO and GEO/AEO), and a Knowledge-Graph Framework for Query Discovery Beyond Search Volume**, preprint v5.5, 14 November 2026, submitted to arXiv (cs.IR): [`paper/`](paper/) (PDF, DOCX, Markdown, source bundle). It replaces v4.8; see [`paper/README.md`](paper/README.md) for the correction that goes with it.
 
 The paper's measurement result, two commercial instruments read on twelve sections of one domain on one day, ships as data plus the script that prints every statistic quoted: [`data/instrument_divergence/`](data/instrument_divergence/).
 
